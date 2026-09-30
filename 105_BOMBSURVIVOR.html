@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BOMB SURVIVOR | MY WEB LAB</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #faf8ef;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #776e65;
+        }
+        .scores {
+            display: flex;
+            gap: 8px;
+        }
+        .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 50px;
+        }
+        .score-box span {
+            display: block;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        canvas {
+            background-color: #8f7a66;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            touch-action: none;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            font-size: 12px;
+            color: #8f7a66;
+        }
+        button {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:active {
+            background: #776e65;
+        }
+
+        /* 広告モーダル用CSS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div style="text-align: left; margin-bottom: 8px;">
+            <a href="index.html" style="text-decoration:none; color:#776e65; font-size:12px;">← ポータルへ戻る</a>
+        </div>
+
+        <div class="header">
+            <h1>BOMB SURVIVOR</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0.0s</span></div>
+                <div class="score-box">BEST<span id="best">0.0s</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <div class="controls">
+            <div class="info">ドラッグ / 矢印キーで火の粉を避ける</div>
+            <button id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- 忍者admaxスクリプト -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM要素の取得
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const bestEl = document.getElementById('best');
+        const adModal = document.getElementById('adModal');
+
+        // ゲーム状態・タイム管理の変数
+        let gameState = 'PLAY'; // 'PLAY', 'GAMEOVER'
+        let elapsedTime = 0;
+        let bestTime = parseFloat(localStorage.getItem('bomb_survival_best')) || 0;
+        let lastTimestamp = 0;
+
+        // 爆弾（プレイヤー）オブジェクト
+        const player = {
+            x: 160,
+            y: 200,
+            radius: 12,
+            speed: 3.5,
+            isDragging: false
+        };
+
+        // キーボード操作の状態
+        const keys = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false
+        };
+
+        // 配列・タイマー
+        let sparks = [];
+        let particles = [];
+        let spawnTimer = 0;
+
+        // 初期表示の設定
+        bestEl.textContent = bestTime.toFixed(1) + 's';
+
+        // 火の粉生成・管理（高難易度調整）
+        function updateSparks() {
+            // 約45秒で最高難易度（進行度1.0）へ到達
+            let progress = Math.min(elapsedTime / 45, 1.0);
+
+            // 火の粉の速度
+            let minSpeed = 2.2 + progress * 3.8;
+            let maxSpeed = 3.8 + progress * 5.2;
+
+            // 画面上の最大数 (20〜65個)
+            let maxSparks = Math.floor(20 + progress * 45);
+
+            // 出現頻度（フレーム間隔）
+            let spawnInterval = Math.max(4, Math.floor(28 - progress * 24));
+
+            spawnTimer++;
+            if (spawnTimer >= spawnInterval && sparks.length < maxSparks) {
+                spawnTimer = 0;
+                let countToSpawn = progress > 0.6 ? 3 : (progress > 0.3 ? 2 : 1);
+                for (let i = 0; i < countToSpawn; i++) {
+                    if (sparks.length < maxSparks) {
+                        sparks.push(createSpark(minSpeed, maxSpeed));
+                    }
+                }
+            }
+
+            // 火の粉の移動 & 画面外削除
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                let s = sparks[i];
+                s.x += s.vx;
+                s.y += s.vy;
+
+                if (s.x < -50 || s.x > canvas.width + 50 || s.y < -50 || s.y > canvas.height + 50) {
+                    sparks.splice(i, 1);
+                }
+            }
+        }
+
+        function createSpark(minSpeed, maxSpeed) {
+            let side = Math.floor(Math.random() * 4);
+            let x, y;
+
+            if (side === 0) { x = Math.random() * canvas.width; y = -15; }
+            else if (side === 1) { x = canvas.width + 15; y = Math.random() * canvas.height; }
+            else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + 15; }
+            else { x = -15; y = Math.random() * canvas.height; }
+
+            let targetX = 30 + Math.random() * (canvas.width - 60);
+            let targetY = 30 + Math.random() * (canvas.height - 60);
+            let angle = Math.atan2(targetY - y, targetX - x) + (Math.random() - 0.5) * 0.4;
+            let speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
+
+            return {
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                radius: 3 + Math.random() * 2,
+                color: Math.random() > 0.3 ? '#ff4500' : '#ffa500'
+            };
+        }
+
+        // 爆発エフェクト
+        function triggerExplosion(x, y) {
+            for (let i = 0; i < 40; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let speed = 1 + Math.random() * 6;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 2 + Math.random() * 4,
+                    color: ['#ff4500', '#ffa500', '#ffff00', '#ffffff'][Math.floor(Math.random() * 4)],
+                    life: 1.0,
+                    decay: 0.02 + Math.random() * 0.03
+                });
+            }
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function updatePlayer() {
+            if (gameState === 'GAMEOVER') return;
+
+            let dx = 0, dy = 0;
+            if (keys.ArrowUp) dy -= 1;
+            if (keys.ArrowDown) dy += 1;
+            if (keys.ArrowLeft) dx -= 1;
+            if (keys.ArrowRight) dx += 1;
+
+            if (dx !== 0 && dy !== 0) {
+                dx *= 0.7071;
+                dy *= 0.7071;
+            }
+
+            player.x += dx * player.speed;
+            player.y += dy * player.speed;
+
+            player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+            player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+        }
+
+        function checkCollision() {
+            if (gameState === 'GAMEOVER') return;
+
+            for (let s of sparks) {
+                let dist = Math.hypot(player.x - s.x, player.y - s.y);
+                if (dist < player.radius + s.radius - 2) {
+                    gameState = 'GAMEOVER';
+                    triggerExplosion(player.x, player.y);
+                    handleGameOver();
+                    break;
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 火の粉
+            for (let s of sparks) {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = s.color;
+                ctx.shadowColor = s.color;
+                ctx.shadowBlur = 6;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // 爆発粒子
+            for (let p of particles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = Math.max(0, p.life);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+
+            // 爆弾（プレイヤー）
+            if (gameState !== 'GAMEOVER') {
+                let bx = player.x;
+                let by = player.y;
+
+                // 導火線
+                ctx.beginPath();
+                ctx.moveTo(bx, by - 10);
+                ctx.quadraticCurveTo(bx + 8, by - 18, bx + 5, by - 22);
+                ctx.strokeStyle = '#d7ccc8';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 導火線の火花
+                ctx.beginPath();
+                ctx.arc(bx + 5, by - 22, 2 + Math.random() * 2, 0, Math.PI * 2);
+                ctx.fillStyle = Math.random() > 0.5 ? '#ffeb3b' : '#ff5722';
+                ctx.fill();
+
+                // 本体
+                ctx.beginPath();
+                ctx.arc(bx, by, player.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#333333';
+                ctx.fill();
+
+                // 光沢
+                ctx.beginPath();
+                ctx.arc(bx - 3, by - 3, 3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fill();
+
+                // 目（白目）
+                ctx.beginPath();
+                ctx.arc(bx - 4, by - 1, 1.8, 0, Math.PI * 2);
+                ctx.arc(bx + 4, by - 1, 1.8, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+
+                // 黒目
+                ctx.beginPath();
+                ctx.arc(bx - 3.5, by - 1, 0.8, 0, Math.PI * 2);
+                ctx.arc(bx + 4.5, by - 1, 0.8, 0, Math.PI * 2);
+                ctx.fillStyle = '#000000';
+                ctx.fill();
+
+                // にっこり口
+                ctx.beginPath();
+                ctx.arc(bx, by + 2, 3, 0.2, Math.PI - 0.2);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+            }
+        }
+
+        function gameLoop(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            let deltaTime = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            if (gameState !== 'GAMEOVER') {
+                elapsedTime += deltaTime;
+                scoreEl.textContent = elapsedTime.toFixed(1) + 's';
+                updatePlayer();
+                updateSparks();
+                checkCollision();
+            }
+
+            updateParticles();
+            draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function handleGameOver() {
+            if (elapsedTime > bestTime) {
+                bestTime = elapsedTime;
+                localStorage.setItem('bomb_survival_best', bestTime.toFixed(1));
+                bestEl.textContent = bestTime.toFixed(1) + 's';
+            }
+
+            setTimeout(() => {
+                adModal.style.display = 'flex';
+            }, 300);
+        }
+
+        function closeAdModal() {
+            adModal.style.display = 'none';
+            resetGame();
+        }
+
+        function resetGame() {
+            elapsedTime = 0;
+            gameState = 'PLAY';
+            sparks = [];
+            particles = [];
+            spawnTimer = 0;
+            player.x = canvas.width / 2;
+            player.y = canvas.height / 2;
+            player.isDragging = false;
+            scoreEl.textContent = '0.0s';
+            lastTimestamp = 0;
+        }
+
+        function isModalOpen() {
+            return adModal.style.display === 'flex';
+        }
+
+        // 入力制御
+        window.addEventListener('keydown', (e) => {
+            if (isModalOpen()) return;
+            if (keys.hasOwnProperty(e.key)) {
+                keys[e.key] = true;
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (isModalOpen()) return;
+            if (keys.hasOwnProperty(e.key)) {
+                keys[e.key] = false;
+            }
+        });
+
+        function getCanvasCoords(e) {
+            let rect = canvas.getBoundingClientRect();
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (canvas.width / rect.width),
+                y: (clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function handleStart(e) {
+            if (isModalOpen()) return;
+            let coords = getCanvasCoords(e);
+            let dist = Math.hypot(player.x - coords.x, player.y - coords.y);
+            if (dist < player.radius + 20) {
+                player.isDragging = true;
+            } else {
+                player.x = coords.x;
+                player.y = coords.y;
+                player.isDragging = true;
+            }
+            e.preventDefault();
+        }
+
+        function handleMove(e) {
+            if (isModalOpen()) return;
+            if (player.isDragging && gameState !== 'GAMEOVER') {
+                let coords = getCanvasCoords(e);
+                player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, coords.x));
+                player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, coords.y));
+                e.preventDefault();
+            }
+        }
+
+        function handleEnd(e) {
+            player.isDragging = false;
+        }
+
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+
+        canvas.addEventListener('touchstart', handleStart, { passive: false });
+        canvas.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', handleEnd);
+
+        // ゲームループ開始
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

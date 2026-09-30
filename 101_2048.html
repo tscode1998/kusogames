@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>2048 | MY WEB LAB</title>
     <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #faf8ef;
@@ -108,6 +113,60 @@
             border-radius: 3px;
             cursor: pointer;
         }
+
+        /* 広告用モーダルのスタイル */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            overflow: hidden;
+        }
+
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            padding: 10px 30px;
+            font-size: 14px;
+            border-radius: 20px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -133,14 +192,29 @@
         <button onclick="resetGame()">リセット</button>
     </div>
 
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- admax -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+                <!-- admax -->
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
     <script>
         const grid = document.getElementById('grid');
         const scoreDisplay = document.getElementById('score');
         const bestScoreDisplay = document.getElementById('bestScore');
+        const adModal = document.getElementById('adModal');
         
         let board = Array(16).fill(0);
         let score = 0;
         let bestScore = localStorage.getItem('2048_best') || 0;
+        let isGameOver = false;
 
         bestScoreDisplay.textContent = bestScore;
 
@@ -156,6 +230,7 @@
             addNumber();
             addNumber();
             updateBoard();
+            isGameOver = false;
         }
 
         // 空いている場所に「2」または「4」を追加
@@ -197,8 +272,24 @@
             return arr;
         }
 
+        // ゲームオーバー判定（空きマスがなく、隣り合う同じ数字もない状態）
+        function checkGameOver() {
+            if (board.includes(0)) return false;
+
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    let current = board[i * 4 + j];
+                    if (j < 3 && current === board[i * 4 + (j + 1)]) return false; // 横方向
+                    if (i < 3 && current === board[(i + 1) * 4 + j]) return false; // 縦方向
+                }
+            }
+            return true;
+        }
+
         // キー・タッチ共通の移動処理
         function move(direction) {
+            if (adModal.style.display === 'flex' || isGameOver) return;
+
             let oldBoard = [...board];
 
             for (let i = 0; i < 4; i++) {
@@ -221,11 +312,30 @@
             if (JSON.stringify(oldBoard) !== JSON.stringify(board)) {
                 addNumber();
                 updateBoard();
+
+                if (checkGameOver()) {
+                    isGameOver = true;
+                    handleGameOver();
+                }
             }
+        }
+
+        // モーダル表示処理
+        function handleGameOver() {
+            setTimeout(() => {
+                adModal.style.display = 'flex';
+            }, 300);
+        }
+
+        // モーダルを閉じてゲームリセット
+        function closeAdModal() {
+            adModal.style.display = 'none';
+            resetGame();
         }
 
         // --- PC（キーボード）操作 ---
         document.addEventListener('keydown', (e) => {
+            if (adModal.style.display === 'flex') return;
             if (e.key === 'ArrowLeft') move('LEFT');
             if (e.key === 'ArrowRight') move('RIGHT');
             if (e.key === 'ArrowUp') move('UP');
@@ -237,11 +347,13 @@
         let startY = 0;
 
         document.addEventListener('touchstart', (e) => {
+            if (adModal.style.display === 'flex') return;
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
         }, { passive: true });
 
         document.addEventListener('touchend', (e) => {
+            if (adModal.style.display === 'flex') return;
             if (!startX || !startY) return;
 
             let diffX = e.changedTouches[0].clientX - startX;

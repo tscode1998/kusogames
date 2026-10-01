@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>【きのこ or たけのこ？】 | MY WEB LAB</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #faf8ef;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #776e65;
+        }
+        .scores {
+            display: flex;
+            gap: 6px;
+        }
+        .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 55px;
+        }
+        .score-box span {
+            display: block;
+            font-size: 12px;
+            margin-top: 1px;
+        }
+        canvas {
+            background-color: #8f7a66;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            touch-action: none;
+        }
+
+        /* Action control buttons for clear, mistake-free tapping */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .act-btn {
+            background: #8f7a66;
+            color: white;
+            border: 2px solid #a3907c;
+            padding: 10px 4px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .act-btn:active {
+            background: #776e65;
+            transform: translateY(1px);
+        }
+        .act-btn-discard {
+            background: #d9534f;
+            border-color: #c9302c;
+        }
+        .act-btn-discard:active {
+            background: #ac2925;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            font-size: 10px;
+            color: #8f7a66;
+            text-align: left;
+            line-height: 1.3;
+        }
+        .btn-reset {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-reset:active {
+            background: #776e65;
+        }
+
+        /* 広告モーダル用CSS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div style="text-align: left; margin-bottom: 6px;">
+            <a href="index.html" style="text-decoration:none; color:#776e65; font-size:12px;">← ポータルへ戻る</a>
+        </div>
+
+        <div class="header">
+            <h1>きのこ or たけのこ？</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0.00s</span></div>
+                <div class="score-box">BEST<span id="best">0.00s</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <!-- Dynamic Action Buttons -->
+        <div class="action-buttons">
+            <button class="act-btn" onclick="handleAction('LEFT')">
+                <span style="font-size: 16px;">👈 きのこ</span>
+                <span style="font-size: 9px; opacity: 0.8; margin-top:2px;">[← / A / 左フリック]</span>
+            </button>
+            <button class="act-btn act-btn-discard" onclick="handleAction('DISCARD')">
+                <span style="font-size: 16px;">🗑️ 破棄</span>
+                <span style="font-size: 9px; opacity: 0.8; margin-top:2px;">[↑ / W / 上フリック]</span>
+            </button>
+            <button class="act-btn" onclick="handleAction('RIGHT')">
+                <span style="font-size: 16px;">たけのこ 👉</span>
+                <span style="font-size: 9px; opacity: 0.8; margin-top:2px;">[→ / D / 右フリック]</span>
+            </button>
+        </div>
+
+        <div class="controls">
+            <div class="info">⚠️ 赤キノコ(毒)＆緑タケノコ(偽)は【破棄】！</div>
+            <button class="btn-reset" id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- 忍者admaxスクリプト -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURABLE PARAMETERS
+        // ==========================================
+        const PARAM_MAX_ACCEL_TIME = 30.0;       // Seconds until speed/spawn frequency caps out
+        const PARAM_INITIAL_SPEED = 2.0;        // Initial falling speed (px/frame)
+        const PARAM_MAX_SPEED = 7.5;            // Max falling speed (px/frame)
+        const PARAM_INITIAL_SPAWN_INTERVAL = 90; // Initial spawn delay (frames)
+        const PARAM_MIN_SPAWN_INTERVAL = 25;     // Min spawn delay (frames)
+        const PARAM_FAKE_APPEAR_TIME = 3.0;     // Seconds when fakes start spawning
+
+        // DOM elements
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const bestElement = document.getElementById('best');
+
+        // State variables
+        let gameState = 'START'; // 'START', 'PLAYING', 'GAMEOVER'
+        let startTime = 0;
+        let elapsedTime = 0;
+        let bestTime = parseFloat(localStorage.getItem('kinoko_takenoko_best_v2')) || 0;
+        let items = [];
+        let spawnTimer = 0;
+        let animationFrameId = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // Evaluation outputs
+        let finalGrade = '';
+        let finalComment = '';
+
+        bestElement.textContent = bestTime.toFixed(2) + 's';
+
+        // Item classification types
+        const TYPE_KINOKO = 'KINOKO';               // Sort LEFT
+        const TYPE_TAKENOKO = 'TAKENOKO';           // Sort RIGHT
+        const TYPE_POISON_KINOKO = 'POISON_KINOKO'; // Discard (UP / TRASH)
+        const TYPE_FAKE_TAKENOKO = 'FAKE_TAKENOKO'; // Discard (UP / TRASH)
+
+        function resetGame() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            gameState = 'PLAYING';
+            startTime = performance.now();
+            elapsedTime = 0;
+            items = [];
+            spawnTimer = 0;
+            scoreElement.textContent = '0.00s';
+            
+            spawnItem();
+            gameLoop();
+        }
+
+        function handleGameOver(reason) {
+            gameState = 'GAMEOVER';
+            
+            // Tiered evaluation (3 levels: 〇, △, ×)
+            if (elapsedTime >= 25.0) {
+                finalGrade = '〇';
+                finalComment = '神級の仕分け職人！全見極め成功！';
+            } else if (elapsedTime >= 10.0) {
+                finalGrade = '△';
+                finalComment = 'そこそこの仕分け力！毒に注意！';
+            } else {
+                finalGrade = '×';
+                finalComment = '偽物・毒に騙されました…出直し！';
+            }
+
+            // Save best score
+            if (elapsedTime > bestTime) {
+                bestTime = elapsedTime;
+                localStorage.setItem('kinoko_takenoko_best_v2', bestTime.toString());
+                bestElement.textContent = bestTime.toFixed(2) + 's';
+            }
+
+            draw();
+
+            // Open ad modal after 300ms
+            setTimeout(() => {
+                document.getElementById('adModal').style.display = 'flex';
+            }, 300);
+        }
+
+        function closeAdModal() {
+            document.getElementById('adModal').style.display = 'none';
+            resetGame();
+        }
+
+        function isInputDisabled() {
+            const adModal = document.getElementById('adModal');
+            return adModal && adModal.style.display === 'flex';
+        }
+
+        function spawnItem() {
+            const rand = Math.random();
+            let type;
+
+            if (elapsedTime > PARAM_FAKE_APPEAR_TIME && rand < 0.35) {
+                // Spawn fake or poison item
+                type = Math.random() < 0.5 ? TYPE_POISON_KINOKO : TYPE_FAKE_TAKENOKO;
+            } else {
+                // Spawn genuine item
+                type = Math.random() < 0.5 ? TYPE_KINOKO : TYPE_TAKENOKO;
+            }
+
+            items.push({
+                x: 160 + (Math.random() * 20 - 10),
+                y: 20,
+                type: type,
+                state: 'FALLING' // 'FALLING', 'SORTED_LEFT', 'SORTED_RIGHT', 'DISCARDED'
+            });
+        }
+
+        // Action input handler (LEFT, RIGHT, DISCARD)
+        function handleAction(action) {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+                return;
+            }
+
+            if (gameState !== 'PLAYING') return;
+
+            // Find lowest falling item closest to bottom
+            let targetItem = null;
+            let maxY = -1;
+            for (let item of items) {
+                if (item.state === 'FALLING' && item.y > maxY) {
+                    maxY = item.y;
+                    targetItem = item;
+                }
+            }
+
+            if (!targetItem) return;
+
+            let isCorrect = false;
+
+            if (action === 'LEFT' && targetItem.type === TYPE_KINOKO) {
+                isCorrect = true;
+                targetItem.state = 'SORTED_LEFT';
+            } else if (action === 'RIGHT' && targetItem.type === TYPE_TAKENOKO) {
+                isCorrect = true;
+                targetItem.state = 'SORTED_RIGHT';
+            } else if (action === 'DISCARD' && (targetItem.type === TYPE_POISON_KINOKO || targetItem.type === TYPE_FAKE_TAKENOKO)) {
+                isCorrect = true;
+                targetItem.state = 'DISCARDED';
+            }
+
+            if (!isCorrect) {
+                handleGameOver("WRONG_SORT");
+            }
+        }
+
+        function update() {
+            if (gameState !== 'PLAYING') return;
+
+            elapsedTime = (performance.now() - startTime) / 1000;
+            scoreElement.textContent = elapsedTime.toFixed(2) + 's';
+
+            // Calculate current difficulty based on elapsed time (up to 30s)
+            const progress = Math.min(elapsedTime / PARAM_MAX_ACCEL_TIME, 1.0);
+            const currentSpeed = PARAM_INITIAL_SPEED + (PARAM_MAX_SPEED - PARAM_INITIAL_SPEED) * progress;
+            const currentSpawnInterval = PARAM_INITIAL_SPAWN_INTERVAL - (PARAM_INITIAL_SPAWN_INTERVAL - PARAM_MIN_SPAWN_INTERVAL) * progress;
+
+            spawnTimer++;
+            if (spawnTimer >= currentSpawnInterval) {
+                spawnItem();
+                spawnTimer = 0;
+            }
+
+            const finishLineY = 320;
+            for (let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+
+                if (item.state === 'FALLING') {
+                    item.y += currentSpeed;
+
+                    if (item.y >= finishLineY) {
+                        handleGameOver("MISSED_ITEM");
+                        return;
+                    }
+                } else if (item.state === 'SORTED_LEFT') {
+                    item.x -= 20;
+                    item.y -= 3;
+                } else if (item.state === 'SORTED_RIGHT') {
+                    item.x += 20;
+                    item.y -= 3;
+                } else if (item.state === 'DISCARDED') {
+                    item.y -= 22; // Fly upwards to trash
+                }
+
+                // Cleanup offscreen items
+                if (item.x < -60 || item.x > 380 || item.y < -60) {
+                    items.splice(i, 1);
+                }
+            }
+        }
+
+        function drawItem(item) {
+            ctx.save();
+            ctx.translate(item.x, item.y);
+
+            if (item.type === TYPE_KINOKO) {
+                // --- 本物 きのこの山 ---
+                // Stalk
+                ctx.fillStyle = '#f3e5ab';
+                ctx.beginPath();
+                ctx.roundRect(-4, 0, 8, 22, 3);
+                ctx.fill();
+                ctx.strokeStyle = '#c8b48c';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Chocolate Cap
+                ctx.fillStyle = '#5a3d28';
+                ctx.beginPath();
+                ctx.arc(0, 0, 16, Math.PI, 0, false);
+                ctx.quadraticCurveTo(0, 6, 0, 6);
+                ctx.fill();
+
+            } else if (item.type === TYPE_TAKENOKO) {
+                // --- 本物 たけのこの里 ---
+                // Cookie base
+                ctx.fillStyle = '#f5e0b3';
+                ctx.beginPath();
+                ctx.ellipse(0, 14, 13, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cone
+                ctx.fillStyle = '#4a2e18';
+                ctx.beginPath();
+                ctx.moveTo(0, -18);
+                ctx.lineTo(14, 14);
+                ctx.lineTo(-14, 14);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ridges
+                ctx.strokeStyle = '#6b4426';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-9, 5); ctx.lineTo(9, 5);
+                ctx.moveTo(-6, -3); ctx.lineTo(6, -3);
+                ctx.stroke();
+
+            } else if (item.type === TYPE_POISON_KINOKO) {
+                // --- 赤の毒きのこ (要破棄) ---
+                ctx.fillStyle = '#e2d4a8';
+                ctx.beginPath();
+                ctx.roundRect(-4, 0, 8, 22, 3);
+                ctx.fill();
+
+                // Bright red toxic cap
+                ctx.fillStyle = '#ff2a2a';
+                ctx.beginPath();
+                ctx.arc(0, 0, 17, Math.PI, 0, false);
+                ctx.fill();
+
+                // White dots
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(-7, -7, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6, -8, 2.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(0, -12, 2.5, 0, Math.PI * 2); ctx.fill();
+
+                // Clear Warning Label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('☠️毒', 0, -18);
+
+            } else if (item.type === TYPE_FAKE_TAKENOKO) {
+                // --- 緑の偽たけのこ (要破棄) ---
+                ctx.fillStyle = '#d4c090';
+                ctx.beginPath();
+                ctx.ellipse(0, 14, 13, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Bright Green fake shoot
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.moveTo(0, -18);
+                ctx.lineTo(14, 14);
+                ctx.lineTo(-14, 14);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ridges
+                ctx.strokeStyle = '#047857';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-9, 5); ctx.lineTo(9, 5);
+                ctx.moveTo(-6, -3); ctx.lineTo(6, -3);
+                ctx.stroke();
+
+                // Clear Warning Label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('⚠️偽', 0, -20);
+            }
+
+            ctx.restore();
+        }
+
+        function draw() {
+            // Background
+            ctx.fillStyle = '#8f7a66';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Left / Right / Trash Drop Zones
+            // Left Zone
+            ctx.fillStyle = 'rgba(240, 220, 190, 0.12)';
+            ctx.fillRect(0, 50, 110, canvas.height - 50);
+            // Trash Top Zone
+            ctx.fillStyle = 'rgba(217, 83, 79, 0.2)';
+            ctx.fillRect(110, 0, 100, 50);
+            // Right Zone
+            ctx.fillStyle = 'rgba(200, 240, 210, 0.12)';
+            ctx.fillRect(210, 50, 110, canvas.height - 50);
+
+            // Dividing Guides
+            ctx.strokeStyle = '#a3907c';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(110, 50); ctx.lineTo(110, canvas.height);
+            ctx.moveTo(210, 50); ctx.lineTo(210, canvas.height);
+            ctx.moveTo(110, 50); ctx.lineTo(210, 50);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Bottom Danger line
+            ctx.strokeStyle = '#f65e3b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, 320);
+            ctx.lineTo(320, 320);
+            ctx.stroke();
+
+            // Top Trash Label
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🗑️ 毒・偽物は破棄！', 160, 30);
+
+            // Side Zone Labels
+            ctx.fillStyle = '#f9f6f2';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('👈 きのこ', 55, 360);
+            ctx.fillText('たけのこ 👉', 265, 360);
+
+            // Draw falling items
+            for (let item of items) {
+                drawItem(item);
+            }
+
+            // Start Screen Overlay
+            if (gameState === 'START') {
+                ctx.fillStyle = 'rgba(0,0,0,0.65)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 20px -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('きのこ or たけのこ？', 160, 110);
+
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillStyle = '#ffd166';
+                ctx.fillText('【ルール解説】', 160, 150);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('🍄 きのこ → [左仕分け]', 160, 180);
+                ctx.fillText('🎍 たけのこ → [右仕分け]', 160, 205);
+                ctx.fillText('☠️ 赤きのこ・緑たけのこ → [破棄]', 160, 230);
+
+                ctx.fillStyle = '#f65e3b';
+                ctx.fillRect(70, 275, 180, 44);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText('スタート！', 160, 302);
+            }
+
+            // Game Over Screen Overlay
+            if (gameState === 'GAMEOVER') {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#f65e3b';
+                ctx.font = 'bold 22px -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', 160, 110);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px -apple-system, sans-serif';
+                ctx.fillText('生存記録: ' + elapsedTime.toFixed(2) + '秒', 160, 145);
+
+                // 3-tier Evaluation Mark
+                ctx.font = 'bold 64px -apple-system, sans-serif';
+                if (finalGrade === '〇') ctx.fillStyle = '#4cd964';
+                else if (finalGrade === '△') ctx.fillStyle = '#ffcc00';
+                else ctx.fillStyle = '#ff3b30';
+                ctx.fillText(finalGrade, 160, 225);
+
+                // Evaluation Comment
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px -apple-system, sans-serif';
+                ctx.fillText(finalComment, 160, 265);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            if (gameState === 'PLAYING') {
+                animationFrameId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Keyboard mapping (Left / Right / Up for Discard)
+        window.addEventListener('keydown', (e) => {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+                return;
+            }
+
+            if (gameState === 'PLAYING') {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                    handleAction('LEFT');
+                } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                    handleAction('RIGHT');
+                } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
+                    handleAction('DISCARD');
+                }
+            }
+        });
+
+        // Touch swipe mapping
+        canvas.addEventListener('touchstart', (e) => {
+            if (isInputDisabled()) return;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+                return;
+            }
+
+            if (gameState !== 'PLAYING') return;
+
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+
+            // Swipe logic
+            if (Math.abs(deltaY) > 25 && deltaY < -20 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                // Swipe UP -> Discard
+                handleAction('DISCARD');
+            } else if (Math.abs(deltaX) > 20) {
+                if (deltaX < 0) {
+                    handleAction('LEFT');
+                } else {
+                    handleAction('RIGHT');
+                }
+            } else {
+                // Tap location on canvas
+                const rect = canvas.getBoundingClientRect();
+                const tapX = touch.clientX - rect.left;
+                const tapY = touch.clientY - rect.top;
+
+                if (tapY < 60) {
+                    handleAction('DISCARD');
+                } else if (tapX < rect.width / 2) {
+                    handleAction('LEFT');
+                } else {
+                    handleAction('RIGHT');
+                }
+            }
+        });
+
+        // Mouse click on start screen
+        canvas.addEventListener('mousedown', (e) => {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+            }
+        });
+
+        // Initial draw
+        draw();
+    </script>
+</body>
+</html>

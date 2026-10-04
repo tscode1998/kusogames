@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>もふもふクレーン | MY WEB LAB</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #faf8ef;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #776e65;
+        }
+        .scores {
+            display: flex;
+            gap: 8px;
+        }
+        .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 50px;
+        }
+        .score-box span {
+            display: block;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        canvas {
+            background-color: #8f7a66;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            font-size: 12px;
+            color: #8f7a66;
+        }
+        button {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:active {
+            background: #776e65;
+        }
+
+        /* 広告モーダル用CSS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+
+        /* 操作パッド（ゲーム固有の追加CSS） */
+        .pad {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            touch-action: none;
+            -webkit-touch-callout: none;
+        }
+        .dpad {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(2, 46px);
+            gap: 6px;
+        }
+        .pad button {
+            padding: 0;
+            font-size: 13px;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .dpad .up { grid-column: 2; grid-row: 1; }
+        .dpad .lf { grid-column: 1; grid-row: 2; }
+        .dpad .dn { grid-column: 2; grid-row: 2; }
+        .dpad .rt { grid-column: 3; grid-row: 2; }
+        .drop-btn {
+            flex: 1;
+            height: 98px;
+            font-size: 18px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div style="text-align: left; margin-bottom: 8px;">
+            <a href="index.html" style="text-decoration:none; color:#776e65; font-size:12px;">← ポータルへ戻る</a>
+        </div>
+
+        <div class="header">
+            <h1>もふもふクレーン</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0</span></div>
+                <div class="score-box">BEST<span id="best">0</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <div class="controls">
+            <div class="info">矢印/WASD:移動　Space:降下</div>
+            <button id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+
+        <div class="pad">
+            <div class="dpad">
+                <button class="up" data-dir="u">▲ 奥</button>
+                <button class="lf" data-dir="l">◀ 左</button>
+                <button class="dn" data-dir="d">▼ 手前</button>
+                <button class="rt" data-dir="r">右 ▶</button>
+            </div>
+            <button id="btnDrop" class="drop-btn">アーム降下<br>(決定)</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- 忍者admaxスクリプト -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // ゲームバランス設定（ここを書き換えるだけで調整できます）
+    // ============================================================
+    const CONFIG = {
+        TIME: 30,              // 制限時間(秒)
+        MOVE_SPEED: 150,       // アーム移動速度
+        DOWN_SPEED: 240,       // 降下速度
+        UP_SPEED: 240,         // 上昇速度
+        CARRY_SPEED: 300,      // 回収口への運搬速度
+        GRAB_TIME: 0.35,       // 掴む動作の時間(秒)
+        RELEASE_TIME: 0.35,    // 離す動作の時間(秒)
+        REACH: 24,             // 掴める範囲(影の中心から景品の影の中心まで)
+        ALIGN_PENALTY: 0.5,    // ズレによる成功率の減少(0〜1)
+        CLAW_R: 26,            // アームの見た目の大きさ
+        H_TOP: 60,             // アームの待機高さ
+        H_BOTTOM: 6,           // アームの降下到達高さ
+        YS: 0.55,              // 床の奥行き圧縮率(見た目と判定に共通)
+        FIELD: { x0: 24, x1: 296, y0: 128, y1: 346 },
+        CHUTE: { x: 24, y: 292, w: 62, h: 54 },   // 回収口
+        HOME: { x: 270, y: 148 },                  // 開始位置
+        // 景品: grip=掴み成功率 slip=運搬中に落とす確率 pts=点数 count=配置数
+        PRIZES: [
+            { id: 'blob',  name: 'ぷにまる', r: 13, grip: 0.90, slip: 0.05, pts: 1, count: 3 },
+            { id: 'chick', name: 'ひよこ',   r: 14, grip: 0.80, slip: 0.10, pts: 2, count: 3 },
+            { id: 'bunny', name: 'うさぎ',   r: 15, grip: 0.65, slip: 0.15, pts: 3, count: 2 },
+            { id: 'bear',  name: 'くま',     r: 19, grip: 0.50, slip: 0.20, pts: 5, count: 1 },
+            { id: 'star',  name: 'ほし',     r: 15, grip: 0.35, slip: 0.25, pts: 8, count: 1 }
+        ],
+        // ランク(合計点数。上から順に判定)
+        RANKS: [
+            { min: 10, label: 'S' },
+            { min: 6,  label: 'A' },
+            { min: 3,  label: 'B' },
+            { min: 1,  label: 'C' }
+        ]
+    };
+
+    // ============================================================
+    // 基本セットアップ
+    // ============================================================
+    const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    const cv = document.getElementById('gameCanvas');
+    const ctx = cv.getContext('2d');
+    const W = 320, H = 400;
+    const F = CONFIG.FIELD, CH = CONFIG.CHUTE, YS = CONFIG.YS;
+    const TARGET = { x: CH.x + CH.w / 2, y: CH.y + CH.h / 2 };
+    const dir = { l: 0, r: 0, u: 0, d: 0 };
+    let score, got, timeLeft, started, over, pendingEnd, state, stT;
+    let arm, held, prizes, fx, result, chuteFlash, carryTotal;
+    let best = 0;
+    try { best = parseInt(localStorage.getItem('craneBest')) || 0; } catch (e) {}
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const isModalOpen = () => document.getElementById('adModal').style.display === 'flex';
+
+    // ============================================================
+    // 広告モーダル連携（仕様どおり）
+    // ============================================================
+    function handleGameOver() {
+        setTimeout(() => {
+            document.getElementById('adModal').style.display = 'flex';
+        }, 900);
+    }
+    function closeAdModal() {
+        document.getElementById('adModal').style.display = 'none';
+        resetGame();
+    }
+
+    // ============================================================
+    // ゲーム進行
+    // ============================================================
+    function updateUI() {
+        document.getElementById('score').textContent = score;
+        document.getElementById('best').textContent = best;
+    }
+
+    function spawnPrizes() {
+        prizes = [];
+        CONFIG.PRIZES.forEach(t => {
+            for (let i = 0; i < t.count; i++) {
+                for (let k = 0; k < 300; k++) {
+                    const x = rand(F.x0 + t.r + 6, F.x1 - t.r - 6);
+                    const y = rand(F.y0 + 14, F.y1 - 6);
+                    if (x < CH.x + CH.w + t.r + 4 && y > CH.y - 8) continue;
+                    if (prizes.some(p => Math.hypot(p.x - x, (p.y - y) / YS) < (p.r + t.r) * 0.95)) continue;
+                    prizes.push(Object.assign({}, t, { x, y, py: 0, vy: 0, falling: false }));
+                    break;
+                }
+            }
+        });
+    }
+
+    function resetGame() {
+        score = 0; got = 0; timeLeft = CONFIG.TIME;
+        started = false; over = false; pendingEnd = false;
+        state = 'idle'; stT = 0; held = null; fx = []; result = null; chuteFlash = 0;
+        arm = { x: CONFIG.HOME.x, y: CONFIG.HOME.y, h: CONFIG.H_TOP, open: 1 };
+        dir.l = dir.r = dir.u = dir.d = 0;
+        spawnPrizes();
+        updateUI();
+    }
+
+    function setState(s) { state = s; stT = 0; }
+    function inChute(p) { return p.x >= CH.x && p.x <= CH.x + CH.w && p.y >= CH.y && p.y <= CH.y + CH.h; }
+
+    function win(p) {
+        p.won = true; got++; score += p.pts; chuteFlash = 0.5;
+        fx.push({ t: 0, x: p.x, y: p.y - 28, txt: p.name + ' +' + p.pts, col: '#ffd24a' });
+        updateUI();
+    }
+
+    function pressDrop() {
+        if (state !== 'idle' || over || pendingEnd) return;
+        started = true; arm.open = 1; setState('down');
+    }
+
+    function tryGrab() {
+        let tgt = null, bd = 1e9;
+        for (const p of prizes) {
+            if (p.falling) continue;
+            const d = Math.hypot(p.x - arm.x, (p.y - arm.y) / YS);
+            if (d < bd) { bd = d; tgt = p; }
+        }
+        if (tgt && bd <= CONFIG.REACH) {
+            const prob = tgt.grip * (1 - CONFIG.ALIGN_PENALTY * bd / CONFIG.REACH);
+            if (Math.random() < prob) {
+                held = tgt;
+                prizes.splice(prizes.indexOf(tgt), 1);
+                held.slipRoll = Math.random() < held.slip;
+                held.slipAt = 0.2 + Math.random() * 0.6;
+                return;
+            }
+        }
+        fx.push({ t: 0, x: arm.x, y: arm.y - 30, txt: 'ミス…', col: '#ffffff' });
+    }
+
+    function dropHeld() {
+        if (!held) return;
+        held.x = arm.x; held.y = arm.y;
+        held.py = Math.max(0, arm.h - 14 - held.r * 0.9);
+        held.vy = 0; held.falling = true;
+        prizes.push(held); held = null;
+    }
+
+    function finish() {
+        if (prizes.some(p => p.falling)) return;
+        over = true;
+        const r = CONFIG.RANKS.find(r => score >= r.min);
+        result = (got > 0 && r) ? r.label : null;
+        if (score > best) {
+            best = score;
+            try { localStorage.setItem('craneBest', best); } catch (e) {}
+        }
+        updateUI();
+        handleGameOver();
+    }
+
+    function update(dt) {
+        // 景品の落下
+        for (const p of prizes) {
+            if (!p.falling) continue;
+            p.vy += 1400 * dt; p.py -= p.vy * dt;
+            if (p.py <= 0) {
+                p.py = 0; p.falling = false; p.vy = 0;
+                if (inChute(p)) win(p);
+            }
+        }
+        prizes = prizes.filter(p => !p.won);
+        fx.forEach(f => f.t += dt);
+        fx = fx.filter(f => f.t < 1);
+        if (chuteFlash > 0) chuteFlash -= dt;
+        if (over) return;
+
+        if (started && timeLeft > 0) {
+            timeLeft -= dt;
+            if (timeLeft <= 0) { timeLeft = 0; pendingEnd = true; }
+        }
+        stT += dt;
+        const a = arm, C = CONFIG;
+
+        if (state === 'idle') {
+            if (pendingEnd) { finish(); return; }
+            const dx = dir.r - dir.l, dy = dir.d - dir.u;
+            if (dx || dy) {
+                started = true;
+                const n = Math.hypot(dx, dy);
+                a.x = clamp(a.x + dx / n * C.MOVE_SPEED * dt, F.x0 + 10, F.x1 - 10);
+                a.y = clamp(a.y + dy / n * C.MOVE_SPEED * dt * YS, F.y0 + 8, F.y1 - 8);
+            }
+        } else if (state === 'down') {
+            a.h -= C.DOWN_SPEED * dt;
+            if (a.h <= C.H_BOTTOM) { a.h = C.H_BOTTOM; setState('grab'); }
+        } else if (state === 'grab') {
+            a.open = 1 - 0.75 * Math.min(1, stT / C.GRAB_TIME);
+            if (stT >= C.GRAB_TIME) { tryGrab(); setState('up'); }
+        } else if (state === 'up') {
+            a.h += C.UP_SPEED * dt;
+            if (!held) a.open = Math.min(1, a.open + dt * 3);
+            if (a.h >= C.H_TOP) {
+                a.h = C.H_TOP;
+                if (held) {
+                    carryTotal = Math.hypot(TARGET.x - a.x, (TARGET.y - a.y) / YS) || 1;
+                    setState('carry');
+                } else { a.open = 1; setState('idle'); }
+            }
+        } else if (state === 'carry') {
+            const dx = TARGET.x - a.x, dy = (TARGET.y - a.y) / YS;
+            const d = Math.hypot(dx, dy), st = C.CARRY_SPEED * dt;
+            if (d <= st) {
+                a.x = TARGET.x; a.y = TARGET.y;
+                dropHeld(); setState('release');
+            } else {
+                a.x += dx / d * st; a.y += dy / d * st * YS;
+                if (held && held.slipRoll && (1 - d / carryTotal) >= held.slipAt) {
+                    fx.push({ t: 0, x: a.x, y: a.y - 40, txt: 'あっ！', col: '#ffffff' });
+                    dropHeld(); a.open = 1; setState('idle');
+                }
+            }
+        } else if (state === 'release') {
+            a.open = Math.min(1, 0.25 + 0.75 * stT / C.RELEASE_TIME);
+            if (stT >= C.RELEASE_TIME) { a.open = 1; setState('idle'); }
+        }
+    }
+
+    // ============================================================
+    // 描画
+    // ============================================================
+    function circ(x, y, r, c) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); }
+    function ell(x, y, rx, ry, c) { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); }
+    function rr(x, y, w, h, r) {
+        ctx.beginPath(); ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    }
+    function face(x, y, r, mouth) {
+        circ(x - r * 0.36, y, r * 0.11, '#4a3b32'); circ(x + r * 0.36, y, r * 0.11, '#4a3b32');
+        circ(x - r * 0.62, y + r * 0.22, r * 0.14, 'rgba(255,110,150,.5)');
+        circ(x + r * 0.62, y + r * 0.22, r * 0.14, 'rgba(255,110,150,.5)');
+        if (mouth) {
+            ctx.strokeStyle = '#4a3b32'; ctx.lineWidth = 1.3; ctx.beginPath();
+            ctx.arc(x, y + r * 0.1, r * 0.14, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+        }
+    }
+
+    function drawPrize(p) {
+        const r = p.r, x = p.x, cy = p.y - p.py - r * 0.95;
+        if (p.id === 'blob') {
+            ell(x, cy + r * 0.1, r, r * 0.88, '#ff9fba');
+            ell(x - r * 0.4, cy - r * 0.45, r * 0.25, r * 0.14, 'rgba(255,255,255,.6)');
+            face(x, cy + r * 0.1, r, true);
+        } else if (p.id === 'chick') {
+            circ(x, cy, r, '#ffe27a');
+            circ(x - r * 0.95, cy + r * 0.2, r * 0.28, '#ffd24a'); circ(x + r * 0.95, cy + r * 0.2, r * 0.28, '#ffd24a');
+            circ(x, cy - r * 1.02, r * 0.15, '#ffd24a');
+            face(x, cy - r * 0.1, r, false);
+            ctx.fillStyle = '#ff9a3c'; ctx.beginPath();
+            ctx.moveTo(x - r * 0.2, cy + r * 0.1); ctx.lineTo(x + r * 0.2, cy + r * 0.1); ctx.lineTo(x, cy + r * 0.36); ctx.fill();
+        } else if (p.id === 'bunny') {
+            [-1, 1].forEach(s => {
+                ell(x + s * r * 0.45, cy - r * 1.05, r * 0.28, r * 0.7, '#fffaf5');
+                ell(x + s * r * 0.45, cy - r * 1.05, r * 0.14, r * 0.5, '#ffc2d1');
+            });
+            circ(x, cy, r, '#fffaf5');
+            ctx.strokeStyle = '#e0d2c3'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, cy, r, 0, 7); ctx.stroke();
+            face(x, cy + r * 0.05, r, true);
+        } else if (p.id === 'bear') {
+            [-1, 1].forEach(s => { circ(x + s * r * 0.7, cy - r * 0.75, r * 0.32, '#a06f46'); circ(x + s * r * 0.7, cy - r * 0.75, r * 0.17, '#e9bfa0'); });
+            circ(x, cy, r, '#b8825a');
+            ell(x, cy + r * 0.3, r * 0.42, r * 0.3, '#ecd0b2');
+            face(x, cy - r * 0.12, r, false);
+            circ(x, cy + r * 0.2, r * 0.1, '#4a3b32');
+        } else if (p.id === 'star') {
+            ctx.fillStyle = '#ffd24a'; ctx.strokeStyle = '#f2b134'; ctx.lineWidth = 1.5; ctx.beginPath();
+            for (let i = 0; i < 10; i++) {
+                const ang = -Math.PI / 2 + i * Math.PI / 5, rad = (i % 2 ? 0.5 : 1.15) * r;
+                const px = x + Math.cos(ang) * rad, py = cy + Math.sin(ang) * rad;
+                i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            face(x, cy + r * 0.08, r * 0.7, true);
+        }
+    }
+
+    function drawArm() {
+        const a = arm, C = CONFIG;
+        const barY = a.y - C.H_TOP - 20, hubY = a.y - a.h - 16;
+        // レール(左右)と横バー: 奥行き位置が読み取れる
+        ctx.strokeStyle = '#c9bcae'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        [12, 308].forEach(x => { ctx.beginPath(); ctx.moveTo(x, F.y0 + 8 - C.H_TOP - 26); ctx.lineTo(x, F.y1 - 8 - C.H_TOP - 14); ctx.stroke(); });
+        ctx.lineWidth = 7; ctx.strokeStyle = '#bbada0';
+        ctx.beginPath(); ctx.moveTo(12, barY); ctx.lineTo(308, barY); ctx.stroke();
+        ctx.fillStyle = '#776e65'; rr(a.x - 12, barY - 7, 24, 14, 3); ctx.fill();
+        // ケーブル
+        ctx.lineWidth = 2; ctx.strokeStyle = '#d8d0c8';
+        ctx.beginPath(); ctx.moveTo(a.x, barY); ctx.lineTo(a.x, hubY); ctx.stroke();
+        // つかんでいる景品
+        if (held) {
+            held.x = a.x; held.y = a.y; held.py = Math.max(0, a.h - 14 - held.r * 0.9);
+            drawPrize(held);
+        }
+        // ハブとツメ
+        circ(a.x, hubY, 6, '#f0f0f0');
+        const spread = 4 + a.open * (C.CLAW_R - 8);
+        ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+        [-1, 1].forEach(s => {
+            ctx.beginPath(); ctx.moveTo(a.x, hubY);
+            ctx.lineTo(a.x + s * (spread + 4), hubY + 10);
+            ctx.lineTo(a.x + s * spread * 0.6, hubY + 22); ctx.stroke();
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#8f7a66'; ctx.fillRect(0, 0, W, H);
+
+        // HUD
+        ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.font = 'bold 14px ' + FONT;
+        ctx.fillText('GET ' + got, 14, 28);
+        ctx.textAlign = 'right'; ctx.fillText(score + ' pt', 306, 28);
+        ctx.textAlign = 'center'; ctx.font = 'bold 26px ' + FONT;
+        ctx.fillStyle = (started && timeLeft <= 5) ? '#ffd24a' : '#fff';
+        ctx.fillText(timeLeft.toFixed(1), W / 2, 30);
+        if (pendingEnd && !over) { ctx.font = 'bold 11px ' + FONT; ctx.fillStyle = '#ffd24a'; ctx.fillText('TIME UP', W / 2, 44); }
+
+        // 奥の壁と床
+        ctx.fillStyle = '#a99683'; ctx.fillRect(F.x0, F.y0 - 16, F.x1 - F.x0, 16);
+        ctx.fillStyle = '#efe4d3'; ctx.fillRect(F.x0, F.y0, F.x1 - F.x0, F.y1 - F.y0);
+        ctx.fillStyle = '#e6d9c5';
+        for (let ty = 0; F.y0 + ty * 34 < F.y1; ty++) for (let tx = 0; F.x0 + tx * 34 < F.x1; tx++) {
+            if ((tx + ty) % 2) {
+                const x = F.x0 + tx * 34, y = F.y0 + ty * 34;
+                ctx.fillRect(x, y, Math.min(34, F.x1 - x), Math.min(34, F.y1 - y));
+            }
+        }
+        ctx.fillStyle = '#6b5d52'; ctx.fillRect(F.x0 - 4, F.y1, F.x1 - F.x0 + 8, 6);
+
+        // 回収口
+        ctx.fillStyle = chuteFlash > 0 ? '#f2b179' : '#4a3f36'; rr(CH.x, CH.y, CH.w, CH.h, 6); ctx.fill();
+        ctx.strokeStyle = '#f2b179'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); rr(CH.x + 3, CH.y + 3, CH.w - 6, CH.h - 6, 4); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 12px ' + FONT; ctx.textAlign = 'center';
+        ctx.fillText('▼', CH.x + CH.w / 2, CH.y + 22); ctx.fillText('回収口', CH.x + CH.w / 2, CH.y + 38);
+
+        // ガイド線＋アームの影(平面上の位置)
+        const a = arm;
+        if (!over) {
+            ctx.strokeStyle = 'rgba(246,94,59,.4)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(a.x, F.y0); ctx.lineTo(a.x, F.y1); ctx.moveTo(F.x0, a.y); ctx.lineTo(F.x1, a.y); ctx.stroke();
+            ctx.setLineDash([]);
+            const k = 0.55 + 0.45 * (a.h / CONFIG.H_TOP), rx = CONFIG.CLAW_R * k;
+            ell(a.x, a.y, rx, rx * YS, 'rgba(0,0,0,.28)');
+            ctx.strokeStyle = '#f65e3b'; ctx.lineWidth = 2; ctx.beginPath();
+            ctx.ellipse(a.x, a.y, CONFIG.REACH, CONFIG.REACH * YS, 0, 0, 7); ctx.stroke();
+        }
+
+        // 景品(影→奥から手前の順)
+        prizes.forEach(p => ell(p.x, p.y, p.r * 0.9, p.r * 0.9 * YS, 'rgba(0,0,0,.2)'));
+        if (held) ell(a.x, a.y, held.r * 0.9, held.r * 0.9 * YS, 'rgba(0,0,0,.2)');
+        prizes.slice().sort((p, q) => p.y - q.y).forEach(drawPrize);
+
+        drawArm();
+
+        // エフェクト
+        ctx.textAlign = 'center'; ctx.font = 'bold 15px ' + FONT;
+        fx.forEach(f => {
+            ctx.globalAlpha = 1 - f.t; ctx.fillStyle = f.col;
+            ctx.fillText(f.txt, clamp(f.x, 40, 280), f.y - f.t * 30);
+        });
+        ctx.globalAlpha = 1;
+
+        // スタート案内
+        if (!started && !over) {
+            ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(50, 224, 220, 30, 15); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 13px ' + FONT; ctx.fillText('ボタンを押してスタート！', W / 2, 244);
+        }
+
+        // 結果表示
+        if (over) {
+            ctx.fillStyle = 'rgba(0,0,0,.55)'; rr(30, 150, 260, 120, 12); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+            if (result) {
+                ctx.font = 'bold 22px ' + FONT; ctx.fillText('CLEAR!', W / 2, 184);
+                ctx.fillStyle = '#ffd24a'; ctx.font = 'bold 44px ' + FONT; ctx.fillText('RANK ' + result, W / 2, 234);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 13px ' + FONT; ctx.fillText(got + '個ゲット / ' + score + 'pt', W / 2, 256);
+            } else {
+                ctx.font = 'bold 24px ' + FONT; ctx.fillText('GAME OVER', W / 2, 205);
+                ctx.font = 'bold 13px ' + FONT; ctx.fillText('景品ゲットならず…', W / 2, 238);
+            }
+        }
+    }
+
+    // ============================================================
+    // 入力（モーダル表示中はすべて無効）
+    // ============================================================
+    const KEYMAP = { arrowleft: 'l', a: 'l', arrowright: 'r', d: 'r', arrowup: 'u', w: 'u', arrowdown: 'd', s: 'd' };
+    document.addEventListener('keydown', e => {
+        if (isModalOpen()) return;
+        const k = e.key.toLowerCase();
+        if (KEYMAP[k]) { dir[KEYMAP[k]] = 1; e.preventDefault(); }
+        else if (k === ' ' || k === 'enter') { e.preventDefault(); if (!e.repeat) pressDrop(); }
+    });
+    document.addEventListener('keyup', e => {
+        const k = e.key.toLowerCase();
+        if (KEYMAP[k]) dir[KEYMAP[k]] = 0;
+        if (k === ' ') e.preventDefault();
+    });
+    window.addEventListener('blur', () => { dir.l = dir.r = dir.u = dir.d = 0; });
+
+    document.querySelectorAll('[data-dir]').forEach(b => {
+        const d = b.dataset.dir;
+        const on = e => { if (isModalOpen()) return; e.preventDefault(); dir[d] = 1; };
+        const off = () => { dir[d] = 0; };
+        b.addEventListener('mousedown', on);
+        b.addEventListener('touchstart', on, { passive: false });
+        ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(t => b.addEventListener(t, off));
+    });
+    const dropBtn = document.getElementById('btnDrop');
+    const onDrop = e => { if (isModalOpen()) return; e.preventDefault(); pressDrop(); };
+    dropBtn.addEventListener('mousedown', onDrop);
+    dropBtn.addEventListener('touchstart', onDrop, { passive: false });
+
+    // スマホでの拡大・スクロール防止
+    const padEl = document.querySelector('.pad');
+    padEl.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+    padEl.addEventListener('contextmenu', e => e.preventDefault());
+    ['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+
+    // ============================================================
+    // メインループ
+    // ============================================================
+    let last = 0;
+    function loop(t) {
+        const dt = Math.min(0.05, (t - last) / 1000 || 0);
+        last = t;
+        update(dt); draw();
+        requestAnimationFrame(loop);
+    }
+    resetGame();
+    requestAnimationFrame(loop);
+    </script>
+</body>
+</html>

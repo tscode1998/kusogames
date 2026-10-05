@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>30秒ピンボール | MY WEB LAB</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #faf8ef;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+        .container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #776e65;
+        }
+        .scores {
+            display: flex;
+            gap: 8px;
+        }
+        .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 50px;
+        }
+        .score-box span {
+            display: block;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        canvas {
+            background-color: #8f7a66;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            font-size: 12px;
+            color: #8f7a66;
+        }
+        button {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:active {
+            background: #776e65;
+        }
+
+        /* 広告モーダル用CSS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div style="text-align: left; margin-bottom: 8px;">
+            <a href="index.html" style="text-decoration:none; color:#776e65; font-size:12px;">← ポータルへ戻る</a>
+        </div>
+
+        <div class="header">
+            <h1>30秒ピンボール</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0</span></div>
+                <div class="score-box">BEST<span id="best">0</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <div class="controls">
+            <div class="info">PC: A/Dキー　スマホ: 画面左右タップ</div>
+            <button id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- 忍者admaxスクリプト -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+    <script>
+        const W = 320, H = 400, TIME_LIMIT = 30, R = 7;
+        const GRAVITY = 600, MAX_V = 720, FLIP_RATE = 14, FL = 56;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const bestEl = document.getElementById('best');
+        const adModal = document.getElementById('adModal');
+
+        let state = 'title'; // title / play / over
+        let score = 0, best = 0, timeLeft = TIME_LIMIT;
+        let ball, respawn = 0, combo = 0, lastHit = -9999, comboFlash = 0, clock = 0;
+        let isNewBest = false;
+
+        try { best = parseInt(localStorage.getItem('pinball30_best')) || 0; } catch (e) {}
+        bestEl.textContent = best;
+
+        // フリッパー: angleは下向き(+)→上向き(-)
+        const REST = 0.52, UP = -0.52;
+        const flippers = [
+            { px: 92, py: 366, dir: 1, a: REST, pa: REST, on: false },
+            { px: 228, py: 366, dir: -1, a: REST, pa: REST, on: false }
+        ];
+        // 固定壁（線分）
+        const walls = [
+            [0, 325, 90, 366], [W, 325, 230, 366]
+        ];
+        const bumpers = [
+            { x: 160, y: 140, r: 22, pts: 300, glow: 0 },
+            { x: 85, y: 200, r: 12, pts: 100, glow: 0 },
+            { x: 235, y: 200, r: 12, pts: 100, glow: 0 },
+            { x: 80, y: 85, r: 12, pts: 100, glow: 0 },
+            { x: 240, y: 85, r: 12, pts: 100, glow: 0 }
+        ];
+        const rare = { x: 160, y: 48, r: 9, pts: 1000, glow: 0 };
+
+        function spawnBall() {
+            ball = { x: 150 + Math.random() * 20, y: 25, vx: (Math.random() - 0.5) * 160, vy: 60 };
+        }
+
+        function resetGame() {
+            score = 0; timeLeft = TIME_LIMIT; combo = 0; lastHit = -9999;
+            respawn = 0; isNewBest = false;
+            scoreEl.textContent = 0;
+            flippers.forEach(f => { f.a = f.pa = REST; f.on = false; });
+            spawnBall();
+            state = 'play';
+        }
+
+        function handleGameOver() {
+            setTimeout(() => {
+                document.getElementById('adModal').style.display = 'flex';
+            }, 750);
+        }
+
+        function closeAdModal() {
+            document.getElementById('adModal').style.display = 'none';
+            resetGame();
+        }
+
+        function isModalOpen() { return adModal.style.display === 'flex'; }
+
+        // オンラインランキング送信（要サーバー側API）
+        function submitOnlineScore(s) {
+            // 例:
+            // fetch('https://example.com/api/ranking', {
+            //   method: 'POST', headers: {'Content-Type': 'application/json'},
+            //   body: JSON.stringify({ game: 'pinball30', score: s })
+            // }).catch(() => {});
+        }
+
+        function endGame() {
+            state = 'over';
+            flippers.forEach(f => f.on = false);
+            if (score > best) {
+                best = score; isNewBest = true;
+                try { localStorage.setItem('pinball30_best', best); } catch (e) {}
+                bestEl.textContent = best;
+            }
+            submitOnlineScore(score);
+            handleGameOver();
+        }
+
+        function addScore(base) {
+            const now = clock * 1000;
+            let pts = base;
+            if (now - lastHit < 1500) { combo++; pts = Math.round(base * 1.5); } else { combo = 0; }
+            lastHit = now;
+            if (combo > 0) comboFlash = 0.8;
+            score += pts;
+            scoreEl.textContent = score;
+        }
+
+        // 円と線分の衝突。vs: 面の速度(px/s)
+        function collideSeg(x1, y1, x2, y2, e, vsFn) {
+            const dx = x2 - x1, dy = y2 - y1;
+            const l2 = dx * dx + dy * dy;
+            let t = ((ball.x - x1) * dx + (ball.y - y1) * dy) / l2;
+            t = Math.max(0, Math.min(1, t));
+            const cx = x1 + dx * t, cy = y1 + dy * t;
+            let nx = ball.x - cx, ny = ball.y - cy;
+            const d = Math.hypot(nx, ny);
+            if (d >= R || d === 0) return false;
+            nx /= d; ny /= d;
+            ball.x = cx + nx * R; ball.y = cy + ny * R;
+            const vs = vsFn ? vsFn(t) : [0, 0];
+            let rx = ball.vx - vs[0], ry = ball.vy - vs[1];
+            const vn = rx * nx + ry * ny;
+            if (vn < 0) {
+                rx -= (1 + e) * vn * nx; ry -= (1 + e) * vn * ny;
+                ball.vx = rx + vs[0]; ball.vy = ry + vs[1];
+            }
+            return true;
+        }
+
+        function flipperPt(f, a, t) {
+            return [f.px + f.dir * Math.cos(a) * FL * t, f.py + Math.sin(a) * FL * t];
+        }
+
+        function collideCircle(b) {
+            let nx = ball.x - b.x, ny = ball.y - b.y;
+            const d = Math.hypot(nx, ny), m = R + b.r;
+            if (d >= m || d === 0) return false;
+            nx /= d; ny /= d;
+            ball.x = b.x + nx * m; ball.y = b.y + ny * m;
+            const vn = ball.vx * nx + ball.vy * ny;
+            let sp = Math.hypot(ball.vx, ball.vy);
+            if (vn < 0) { ball.vx -= 2 * vn * nx; ball.vy -= 2 * vn * ny; }
+            sp = Math.max(sp, 320) * 1.05;
+            const cur = Math.hypot(ball.vx, ball.vy) || 1;
+            ball.vx = ball.vx / cur * sp; ball.vy = ball.vy / cur * sp;
+            return true;
+        }
+
+        function update(dt) {
+            clock += dt;
+            // フリッパー
+            flippers.forEach(f => {
+                f.pa = f.a;
+                const target = f.on ? UP : REST;
+                const step = FLIP_RATE * dt;
+                if (f.a < target) f.a = Math.min(target, f.a + step);
+                else f.a = Math.max(target, f.a - step);
+            });
+            rare.x = 160 + 85 * Math.sin(clock * 1.3);
+
+            if (state !== 'play') return;
+            timeLeft -= dt;
+            if (timeLeft <= 0) { timeLeft = 0; endGame(); return; }
+
+            if (respawn > 0) {
+                respawn -= dt;
+                if (respawn <= 0) spawnBall();
+                return;
+            }
+
+            const SUB = 4, h = dt / SUB;
+            for (let i = 0; i < SUB; i++) {
+                ball.vy += GRAVITY * h;
+                const sp = Math.hypot(ball.vx, ball.vy);
+                if (sp > MAX_V) { ball.vx *= MAX_V / sp; ball.vy *= MAX_V / sp; }
+                ball.x += ball.vx * h; ball.y += ball.vy * h;
+
+                if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx) * 0.7; }
+                if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx) * 0.7; }
+                if (ball.y < R) { ball.y = R; ball.vy = Math.abs(ball.vy) * 0.7; }
+
+                walls.forEach(w => collideSeg(w[0], w[1], w[2], w[3], 0.5));
+
+                flippers.forEach(f => {
+                    const p1 = flipperPt(f, f.a, 0), p2 = flipperPt(f, f.a, 1);
+                    collideSeg(p1[0], p1[1], p2[0], p2[1], 0.45, t => {
+                        const c = flipperPt(f, f.a, t), o = flipperPt(f, f.pa, t);
+                        return [(c[0] - o[0]) / dt, (c[1] - o[1]) / dt];
+                    });
+                });
+
+                bumpers.forEach(b => {
+                    if (collideCircle(b)) { b.glow = 1; addScore(b.pts); }
+                });
+                if (collideCircle(rare)) { rare.glow = 1; addScore(rare.pts); }
+            }
+
+            if (ball.y > H + 20) { respawn = 1; combo = 0; ball.y = H + 100; }
+            bumpers.forEach(b => b.glow = Math.max(0, b.glow - dt * 3));
+            rare.glow = Math.max(0, rare.glow - dt * 3);
+            comboFlash = Math.max(0, comboFlash - dt);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            const warn = state === 'play' && timeLeft <= 5 && timeLeft > 0;
+            const blink = warn && Math.floor(clock * 4) % 2 === 0;
+
+            // 壁
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#bbada0'; ctx.lineWidth = 5;
+            walls.forEach(w => { ctx.beginPath(); ctx.moveTo(w[0], w[1]); ctx.lineTo(w[2], w[3]); ctx.stroke(); });
+
+            // バンパー
+            const drawB = (b, base, glowC) => {
+                ctx.save();
+                if (b.glow > 0) { ctx.shadowColor = glowC; ctx.shadowBlur = 25 * b.glow; }
+                ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fillStyle = b.glow > 0 ? '#ffffff' : base; ctx.fill();
+                ctx.lineWidth = 3; ctx.strokeStyle = '#faf8ef'; ctx.stroke();
+                ctx.restore();
+            };
+            bumpers.forEach(b => drawB(b, b.r > 15 ? '#f65e3b' : '#edc22e', '#ffe38a'));
+            drawB(rare, '#9b59b6', '#e0b0ff');
+            ctx.fillStyle = '#faf8ef'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText('300', bumpers[0].x, bumpers[0].y + 4);
+
+            // フリッパー
+            ctx.strokeStyle = '#f9f6f2'; ctx.lineWidth = 10;
+            flippers.forEach(f => {
+                const p2 = flipperPt(f, f.a, 1);
+                ctx.beginPath(); ctx.moveTo(f.px, f.py); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+            });
+
+            // ボール
+            if (state === 'play' && respawn <= 0 && ball) {
+                ctx.beginPath(); ctx.arc(ball.x, ball.y, R, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff'; ctx.fill();
+            }
+
+            // HUD
+            ctx.textAlign = 'left'; ctx.font = 'bold 16px sans-serif';
+            ctx.fillStyle = warn ? (blink ? '#ff4d4d' : '#ffd0d0') : '#faf8ef';
+            ctx.fillText('TIME ' + Math.ceil(timeLeft), 10, 22);
+            if (comboFlash > 0 && state === 'play') {
+                ctx.textAlign = 'right'; ctx.fillStyle = '#ffe38a';
+                ctx.fillText('COMBO ×1.5', W - 10, 22);
+            }
+            if (warn && blink) {
+                ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 6;
+                ctx.strokeRect(3, 3, W - 6, H - 6);
+            }
+
+            if (state === 'title') overlay('30秒ピンボール', ['左右フリッパーでボールを落とさず', '30秒でハイスコアを狙え！', 'バンパー100/300・レア1000', '連続ヒットで×1.5'], 'START');
+            if (state === 'over') overlay('TIME UP!', ['SCORE  ' + score, 'BEST  ' + best + (isNewBest ? '  NEW!' : '')], 'RETRY');
+        }
+
+        const BTN = { x: 90, y: 300, w: 140, h: 44 };
+        function overlay(title, lines, label) {
+            ctx.fillStyle = 'rgba(119,110,101,0.88)'; ctx.fillRect(0, 0, W, H);
+            ctx.textAlign = 'center'; ctx.fillStyle = '#faf8ef';
+            ctx.font = 'bold 28px sans-serif'; ctx.fillText(title, W / 2, 100);
+            ctx.font = 'bold 15px sans-serif';
+            lines.forEach((t, i) => ctx.fillText(t, W / 2, 150 + i * 28));
+            ctx.fillStyle = '#f65e3b';
+            ctx.beginPath(); ctx.roundRect(BTN.x, BTN.y, BTN.w, BTN.h, 22); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 18px sans-serif';
+            ctx.fillText(label, W / 2, BTN.y + 28);
+        }
+
+        // 入力
+        function press(clientX, clientY, target) {
+            if (isModalOpen()) return;
+            if (target && target.closest && target.closest('button, a')) return;
+            if (state === 'title') { resetGame(); return; }
+            if (state === 'over') {
+                const r = canvas.getBoundingClientRect();
+                const cx = (clientX - r.left) * W / r.width, cy = (clientY - r.top) * H / r.height;
+                if (cx >= BTN.x && cx <= BTN.x + BTN.w && cy >= BTN.y && cy <= BTN.y + BTN.h) resetGame();
+                return;
+            }
+            flippers[clientX < window.innerWidth / 2 ? 0 : 1].on = true;
+        }
+        function releaseAll() { flippers.forEach(f => f.on = false); }
+
+        document.addEventListener('keydown', e => {
+            if (isModalOpen()) return;
+            const k = e.key.toLowerCase();
+            if (k !== 'a' && k !== 'd') return;
+            if (state === 'title') { resetGame(); return; }
+            if (state !== 'play') return;
+            flippers[k === 'a' ? 0 : 1].on = true;
+        });
+        document.addEventListener('keyup', e => {
+            const k = e.key.toLowerCase();
+            if (k === 'a') flippers[0].on = false;
+            if (k === 'd') flippers[1].on = false;
+        });
+        document.addEventListener('mousedown', e => press(e.clientX, e.clientY, e.target));
+        document.addEventListener('mouseup', releaseAll);
+        document.addEventListener('touchstart', e => {
+            if (isModalOpen()) return;
+            const t = e.changedTouches[0];
+            if (state === 'play' && !(e.target.closest && e.target.closest('button, a'))) e.preventDefault();
+            press(t.clientX, t.clientY, e.target);
+        }, { passive: false });
+        document.addEventListener('touchend', e => {
+            if (isModalOpen()) return;
+            const t = e.changedTouches[0];
+            if (t.clientX < window.innerWidth / 2) flippers[0].on = false; else flippers[1].on = false;
+        });
+        document.addEventListener('touchcancel', releaseAll);
+
+        let last = performance.now();
+        function loop(now) {
+            const dt = Math.min(0.033, (now - last) / 1000);
+            last = now;
+            update(dt);
+            draw();
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>

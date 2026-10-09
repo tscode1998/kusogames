@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DOT RUNNER | タップでジャンプ！障害物をよける爆速ドットゲーム | Lazy Arcade</title>
+
+    <!-- ===== 共通部分: ファビコン（index.html と同じ） ===== -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ（ゲームごとに変更） -->
+    <meta name="description" content="画面タップやスペースキーでジャンプして、迫ってくる障害物のすき間を抜けていくドットアクションゲーム。何本抜けられるかに挑戦しよう。無料・登録不要で、ベストスコアは自動保存されます。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/104_dot_runner.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="DOT RUNNER | タップでジャンプ！障害物をよける爆速ドットゲーム | Lazy Arcade">
+    <meta property="og:description" content="タップやスペースキーで障害物をよけるドットアクション。何本抜けられるか挑戦！">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/104_dot_runner.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+    <meta property="og:site_name" content="Lazy Arcade">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- ===== 共通部分: サイト共通CSS（index.html / contact.html 準拠）。修正するときは 101〜111 の全ゲームページで同じ内容に更新してください ===== -->
+    <style>
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* index.html の margin/padding リセット。ゲーム領域（.game-stage）には適用しない（ゲームの余白を変えないため） */
+        :where(:not(.game-stage):not(.game-stage *)) {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .site-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+            letter-spacing: 0;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） */
+        .page-nav-bar {
+            margin: 24px 0 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eee4da;
+            color: #776e65;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #8f7a66;
+            color: #ffffff;
+        }
+
+        /* AdSense Slot */
+        .adsense-slot {
+            margin: 35px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        /* Responsive（index.html の @media (max-width: 768px) を踏襲） */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-logo-link {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 72px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            /* ゲームページ用: ゲームが画面外に押し出されないよう、ヘッダー・広告の縦幅を詰める */
+            .site-header {
+                padding: 14px 0;
+            }
+
+            .site-description {
+                display: none;
+            }
+
+            .page-nav-bar {
+                margin: 14px 0 0;
+            }
+
+            .adsense-slot {
+                margin: 16px 0;
+            }
+        }
+    </style>
+
+    <!-- ゲーム固有CSS（ゲーム本体のスタイル。セレクタの付け替え以外は元のまま） -->
+    <style>
+        :where(.game-stage), :where(.game-stage) * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        /* 旧 body のスタイルをゲーム領域へ移設（サイト共通部分と干渉しないよう .game-stage に限定）。
+           background / margin / min-height は削除、padding は左右0（main の余白と二重にならないため） */
+        .game-stage {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            touch-action: manipulation;
+            line-height: normal;
+            margin-bottom: 30px;
+        }
+        :where(.game-stage) .container {
+            padding: 0; /* サイトの .container の左右paddingを打ち消す */
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        :where(.game-stage) h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #776e65;
+        }
+        .scores {
+            display: flex;
+            gap: 8px;
+        }
+        .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 50px;
+        }
+        .score-box span {
+            display: block;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        canvas {
+            background-color: #8f7a66;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            font-size: 12px;
+            color: #8f7a66;
+        }
+        :where(.game-stage) button {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        :where(.game-stage) button:active {
+            background: #776e65;
+        }
+
+        /* 広告用モーダルのスタイル */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            overflow: hidden;
+        }
+
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 共通部分: サイトヘッダー（contact.html と同じ構成。右のビジュアルだけゲームごとに変更）。修正時は全ゲームページを更新 ===== -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <a href="index.html" class="site-logo-link">
+                    <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                            <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                            <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                            <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                            <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                            <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                            <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                            <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                            <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="header-content">
+                        <h1 class="site-title">
+                            Lazy Arcade
+                            <span>完全無料</span>
+                        </h1>
+                        <p class="site-description">
+                            暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ゲームごとに変更: 現在のゲームのアイコンと名前 -->
+            <div class="header-visual" aria-label="プレイ中のゲーム: DOT RUNNER">
+                <div class="header-visual-icon" aria-hidden="true">🏃</div>
+                <div class="header-visual-text">DOT RUNNER</div>
+            </div>
+        </div>
+    </header>
+    <!-- ===== /共通部分: サイトヘッダー ===== -->
+
+    <main class="container">
+
+        <!-- ===== 共通部分: 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） ===== -->
+        <div class="page-nav-bar">
+            <a href="index.html" class="btn-back">◀ ゲーム一覧（トップページ）へ戻る</a>
+        </div>
+
+        <!-- ===== 共通部分: 広告枠（ゲームエリアの上）。広告コードは index.html と同じく空のまま ===== -->
+        <div class="adsense-slot">
+            <div class="adsense-label">スポンサーリンク</div>
+            <!-- Google AdSense ディスプレイ広告コードなどをここに配置 -->
+            <!-- admax -->
+            <script src="https://adm.shinobi.jp/o/1c72557916043bbe6121205054b1ece0"></script>
+            <!-- admax -->
+        </div>
+
+        <!-- ゲームエリア（以下、ゲーム固有。.game-stage の中だけがゲームの操作領域） -->
+        <div class="game-stage">
+    <div class="container">
+
+        <div class="header">
+            <h1>DOT RUNNER</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0</span></div>
+                <div class="score-box">BEST<span id="best">0</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <div class="controls">
+            <div class="info">画面タップ / スペースキーでジャンプ</div>
+            <button id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- admax -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+                <!-- admax -->
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+        </div>
+        <!-- /ゲームエリア -->
+
+
+    </main>
+
+    <!-- ===== 共通部分: サイトフッター（index.html と同じ）。修正時は全ゲームページを更新 ===== -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
+    <!-- ===== /共通部分: サイトフッター ===== -->
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('score');
+        const bestDisplay = document.getElementById('best');
+        const adModal = document.getElementById('adModal');
+
+        let player = {
+            x: 50,
+            y: 200,
+            size: 12,
+            gravity: 0.35,
+            velocity: 0,
+            jump: -6.5
+        };
+
+        let pipes = [];
+        let frameCount = 0;
+        let score = 0;
+        let best = localStorage.getItem('runner_best') || 0;
+        let isGameOver = false;
+        let isStarted = false;
+
+        bestDisplay.textContent = best;
+
+        function drawPlayer() {
+            ctx.fillStyle = '#f2b179';
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#f9f6f2';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function drawPipes() {
+            ctx.fillStyle = '#eee4da';
+            pipes.forEach(pipe => {
+                ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
+                ctx.fillRect(pipe.x, canvas.height - pipe.bottom, pipe.width, pipe.bottom);
+            });
+        }
+
+        function updatePipes() {
+            if (frameCount % 90 === 0) {
+                let gap = 110;
+                let minHeight = 40;
+                let maxHeight = canvas.height - gap - minHeight;
+                let topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+                let bottomHeight = canvas.height - topHeight - gap;
+
+                pipes.push({
+                    x: canvas.width,
+                    width: 35,
+                    top: topHeight,
+                    bottom: bottomHeight,
+                    passed: false
+                });
+            }
+
+            pipes.forEach(pipe => {
+                pipe.x -= 2;
+
+                if (!pipe.passed && pipe.x + pipe.width < player.x) {
+                    pipe.passed = true;
+                    score++;
+                    scoreDisplay.textContent = score;
+                    if (score > best) {
+                        best = score;
+                        bestDisplay.textContent = best;
+                        localStorage.setItem('runner_best', best);
+                    }
+                }
+            });
+
+            if (pipes.length > 0 && pipes[0].x < -35) {
+                pipes.shift();
+            }
+        }
+
+        function checkCollision() {
+            if (player.y + player.size >= canvas.height || player.y - player.size <= 0) {
+                return true;
+            }
+
+            for (let pipe of pipes) {
+                if (player.x + player.size > pipe.x && player.x - player.size < pipe.x + pipe.width) {
+                    if (player.y - player.size < pipe.top || player.y + player.size > canvas.height - pipe.bottom) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!isStarted) {
+                drawPlayer();
+                ctx.fillStyle = '#f9f6f2';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('タップまたはスペースでスタート', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            if (isGameOver) {
+                drawPipes();
+                drawPlayer();
+                ctx.fillStyle = 'rgba(119, 110, 101, 0.75)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#f9f6f2';
+                ctx.font = 'bold 24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
+
+                ctx.font = '14px sans-serif';
+                ctx.fillText('タップで再挑戦', canvas.width / 2, canvas.height / 2 + 25);
+                return;
+            }
+
+            player.velocity += player.gravity;
+            player.y += player.velocity;
+
+            frameCount++;
+            updatePipes();
+
+            if (checkCollision()) {
+                isGameOver = true;
+                handleGameOver();
+            }
+
+            drawPipes();
+            drawPlayer();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function doJump() {
+            if (adModal.style.display === 'flex') return;
+
+            if (!isStarted) {
+                isStarted = true;
+                gameLoop();
+                return;
+            }
+
+            if (isGameOver) {
+                resetGame();
+                return;
+            }
+
+            player.velocity = player.jump;
+        }
+
+        function handleGameOver() {
+            setTimeout(() => {
+                adModal.style.display = 'flex';
+            }, 1000);
+        }
+
+        function closeAdModal() {
+            adModal.style.display = 'none';
+            resetGame();
+        }
+
+        function resetGame() {
+            if (adModal.style.display === 'flex') return;
+            player.y = 200;
+            player.velocity = 0;
+            pipes = [];
+            frameCount = 0;
+            score = 0;
+            scoreDisplay.textContent = 0;
+            isGameOver = false;
+            isStarted = true;
+            gameLoop();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (adModal.style.display === 'flex') return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                doJump();
+            }
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (adModal.style.display === 'flex') return;
+            e.preventDefault();
+            doJump();
+        }, { passive: false });
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (adModal.style.display === 'flex') return;
+            doJump();
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>

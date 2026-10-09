@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせ | Lazy Arcade</title>
+    
+    <!-- タブのアイコン（ファビコン） -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ最適化 -->
+    <meta name="description" content="Lazy Arcade（レイジーアーケード）へのお問い合わせページです。不具合のご報告、ゲームに関するご意見・ご要望はこちらからお送りください。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/contact.html"> <!-- TODO: ドメイン決定後に変更 -->
+
+    <!-- OGP -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="お問い合わせ | Lazy Arcade">
+    <meta property="og:description" content="Lazy Arcadeへのお問い合わせ窓口です。不具合報告やご感想などお気軽にお寄せください。">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/contact.html">
+    <meta property="og:site_name" content="Lazy Arcade">
+    <meta property="og:locale" content="ja_JP">
+
+    <style>
+        /* ==========================================================================
+           1. CSS Variables & Reset
+           ========================================================================== */
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ==========================================================================
+           2. Header Area
+           ========================================================================== */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .site-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* ==========================================================================
+           3. Content Area & Form Launch Button
+           ========================================================================== */
+        .page-nav-bar {
+            margin: 24px 0 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eee4da;
+            color: #776e65;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #8f7a66;
+            color: #ffffff;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            padding: 36px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #f2ede4;
+            margin-bottom: 40px;
+        }
+
+        .page-main-title {
+            font-size: 24px;
+            color: var(--text-sub);
+            font-weight: bold;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--accent-orange);
+        }
+
+        .content-card p {
+            font-size: 14px;
+            color: #665f57;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .content-card ul {
+            margin: 10px 0 28px 24px;
+            font-size: 14px;
+            color: #665f57;
+            line-height: 1.8;
+        }
+
+        .content-card li {
+            margin-bottom: 6px;
+        }
+
+        /* 外部フォームへ飛ばす大きなボタン枠 */
+        .form-launch-box {
+            background: #faf8ef;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius);
+            padding: 32px 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .form-launch-box p {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+        }
+
+        .btn-form-launch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #f2b179, #f65e3b);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 16px 36px;
+            border-radius: 50px;
+            box-shadow: 0 4px 14px rgba(246, 94, 59, 0.35);
+            transition: all 0.25s ease;
+        }
+
+        .btn-form-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(246, 94, 59, 0.5);
+            background: linear-gradient(135deg, #f65e3b, #e04826);
+        }
+
+        /* ==========================================================================
+           4. AdSense Slot & Footer
+           ========================================================================== */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4, .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-logo-link {
+                flex-direction: column;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 90px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .btn-form-launch {
+                width: 100%;
+                font-size: 16px;
+                padding: 14px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダーエリア -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <a href="index.html" class="site-logo-link">
+                    <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                            <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                            <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                            <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                            <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                            <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                            <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                            <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                            <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="header-content">
+                        <h1 class="site-title">
+                            Lazy Arcade
+                            <span>完全無料</span>
+                        </h1>
+                        <p class="site-description">
+                            暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="header-visual" aria-label="ポータル象徴ビジュアル">
+                <div class="header-visual-icon">✉️</div>
+                <div class="header-visual-text">CONTACT US</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="page-nav-bar">
+            <a href="index.html" class="btn-back">◀ ゲーム一覧（トップページ）へ戻る</a>
+        </div>
+
+        <article class="content-card">
+            <h1 class="page-main-title">お問い合わせ</h1>
+
+            <p>
+                Lazy Arcade（レイジーアーケード）をご利用いただきありがとうございます。当サイトに関するご質問、ゲームの不具合・バグ報告、新しいゲームのリクエスト、感想などは下記のお問い合わせフォーム（Googleフォーム）より送信してください。
+            </p>
+
+            <ul>
+                <li>ゲーム画面が動かない・表示崩れが発生する場合は、ご使用の端末（PC/スマホ）やブラウザの種類（Chrome/Safariなど）をあわせて記載いただけますと幸いです。</li>
+                <li>お寄せいただいたご意見・不具合報告には順次目を通し、今後のサイト改善・ゲーム更新の参考にさせていただきます。</li>
+            </ul>
+
+            <!-- Googleフォームへ飛ばす領域 -->
+            <div class="form-launch-box">
+                <p>外部のお問い合わせフォーム（Googleフォーム）が開きます</p>
+                <!-- TODO: href の URL を作成した Google フォームの公開URLに変更してください -->
+                <a href="https://forms.gle/qudSFZQ8Q54ga5zs5" target="_blank" rel="noopener noreferrer" class="btn-form-launch">
+                    ✉️ お問い合わせフォームを開く ↗
+                </a>
+            </div>
+        </article>
+
+
+    </main>
+
+    <!-- フッターエリア -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

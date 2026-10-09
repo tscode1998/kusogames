@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プライバシーポリシー | Lazy Arcade</title>
+    
+    <!-- タブのアイコン（ファビコン）: 足のないゆるカワナマケモノ顔SVG -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ最適化 -->
+    <meta name="description" content="Lazy Arcade（レイジーアーケード）のプライバシーポリシーです。個人情報の取り扱い、Cookie（クッキー）の利用、Google AnalyticsおよびGoogle AdSenseによる広告配信・アクセス解析について記載しています。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/privacy-policy.html"> <!-- TODO: ドメイン決定後に変更 -->
+
+    <!-- OGP -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="プライバシーポリシー | Lazy Arcade">
+    <meta property="og:description" content="Lazy Arcadeのプライバシーポリシー。Cookieの取り扱い、アクセス解析、第三者広告配信等について明記しています。">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/privacy-policy.html">
+    <meta property="og:site_name" content="Lazy Arcade">
+    <meta property="og:locale" content="ja_JP">
+
+    <style>
+        /* ==========================================================================
+           1. CSS Variables & Reset (index.htmlと完全統一)
+           ========================================================================== */
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ==========================================================================
+           2. Header Area & Site Logo
+           ========================================================================== */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .site-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+            letter-spacing: 0;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* ==========================================================================
+           3. Navigation & Content Layout
+           ========================================================================== */
+        .page-nav-bar {
+            margin: 24px 0 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eee4da;
+            color: #776e65;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #8f7a66;
+            color: #ffffff;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            padding: 36px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #f2ede4;
+            margin-bottom: 40px;
+        }
+
+        .page-main-title {
+            font-size: 24px;
+            color: var(--text-sub);
+            font-weight: bold;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--accent-orange);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-card h2 {
+            font-size: 18px;
+            color: var(--text-sub);
+            margin-top: 32px;
+            margin-bottom: 14px;
+            padding-left: 10px;
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .content-card h2:first-of-type {
+            margin-top: 10px;
+        }
+
+        .content-card p {
+            font-size: 14px;
+            color: #665f57;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .content-card ul {
+            margin: 10px 0 20px 24px;
+            font-size: 14px;
+            color: #665f57;
+            line-height: 1.8;
+        }
+
+        .content-card li {
+            margin-bottom: 8px;
+        }
+
+        .content-card a {
+            color: var(--accent-red);
+            text-decoration: underline;
+        }
+
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 10px 0 20px;
+        }
+
+        .policy-table {
+            width: 100%;
+            min-width: 560px;
+            border-collapse: collapse;
+            font-size: 13px;
+            color: #665f57;
+        }
+
+        .policy-table th,
+        .policy-table td {
+            border: 1px solid #e5ddd0;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .policy-table th {
+            background: #faf8ef;
+            color: var(--text-sub);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* ==========================================================================
+           4. AdSense Slot
+           ========================================================================== */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ==========================================================================
+           5. Footer Area
+           ========================================================================== */
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4, .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-logo-link {
+                flex-direction: column;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 90px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダーエリア -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <a href="index.html" class="site-logo-link">
+                    <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                            <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                            <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                            <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                            <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                            <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                            <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                            <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                            <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="header-content">
+                        <h1 class="site-title">
+                            Lazy Arcade
+                            <span>完全無料</span>
+                        </h1>
+                        <p class="site-description">
+                            暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="header-visual" aria-label="ポータル象徴ビジュアル">
+                <div class="header-visual-icon">🔒</div>
+                <div class="header-visual-text">PRIVACY POLICY</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="page-nav-bar">
+            <a href="index.html" class="btn-back">◀ ゲーム一覧（トップページ）へ戻る</a>
+        </div>
+
+       <article class="content-card">
+            <h1 class="page-main-title">プライバシーポリシー</h1>
+
+            <p>
+                Lazy Arcade（以下「当サイト」）の運営者（以下「当運営者」）は、当サイトで提供する無料ブラウザゲーム（以下「本サービス」）における情報の取扱いについて、以下のとおり定めます。本サービスを利用した時点で、本ポリシーに同意したものとみなします。
+            </p>
+
+            <h2>1. 取得する情報と利用目的</h2>
+            <p>
+                当サイトは、IPアドレス、ブラウザ・端末の種類、閲覧ページ、アクセス日時、滞在時間、Cookie等の識別子などの情報を取得します。また、広告の配信にあたり、広告IDなどの情報が取得される場合があります。会員登録は不要で、氏名や住所などの個人を特定する情報は、お問い合わせの際に入力いただく場合を除き取得しません。利用目的は次のとおりです。
+            </p>
+            <ul>
+                <li>本サービスの提供、運営、改善</li>
+                <li>アクセス状況の解析（個人を特定できない統計情報の作成を含みます）</li>
+                <li>広告の配信、表示、効果測定</li>
+                <li>不正アクセス・不正行為の検知と防止</li>
+                <li>お問い合わせへの対応</li>
+            </ul>
+
+            <h2>2. 広告配信・アクセス解析ツールの利用（情報の外部送信）</h2>
+            <p>
+                当サイトは、広告収入によって無料で運営しています。そのため、以下の外部サービスを利用しており、ユーザーの端末から次の情報が各事業者に送信されます。
+            </p>
+
+            <div class="table-wrap">
+                <table class="policy-table">
+                    <thead>
+                        <tr>
+                            <th>サービス名</th>
+                            <th>送信先</th>
+                            <th>送信される情報</th>
+                            <th>目的</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Google アナリティクス</td>
+                            <td>Google LLC</td>
+                            <td>Cookie等の識別子、IPアドレス、閲覧ページ、閲覧日時、ブラウザ・端末の情報</td>
+                            <td>アクセス解析、サービス改善</td>
+                        </tr>
+                        <tr>
+                            <td>Google AdSense</td>
+                            <td>Google LLC</td>
+                            <td>Cookie等の識別子、広告ID、IPアドレス、閲覧ページ、ブラウザ・端末の情報、広告の表示・クリック情報</td>
+                            <td>広告の配信、表示、効果測定</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                送信された情報は、各事業者のプライバシーポリシーに従って取り扱われ、当運営者はその取扱いについて責任を負いません。事業者が日本国外のサーバーで情報を取り扱う場合があります。詳細は
+                <a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noopener noreferrer">Googleのポリシーと規約（ユーザーのデータの取扱い）</a>
+                をご確認ください。
+            </p>
+
+            <h2>3. Cookieと広告のオプトアウト</h2>
+            <p>
+                Cookieは、ブラウザの設定により無効にできます。Googleアナリティクスによる情報収集は、
+                <a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noopener noreferrer">Googleアナリティクス オプトアウト アドオン</a>
+                で無効にできます。ただし、Cookieを無効にすると、当サイトの一部が正常に動作しない場合があります。
+            </p>
+
+            <p>
+                当サイトでは、Googleなどの第三者配信事業者が、Cookieを使用して、ユーザーが当サイトや他のサイトに過去にアクセスした際の情報に基づいて、広告を配信します。Googleが広告Cookieを使用することにより、Googleおよびそのパートナーは、ユーザーが当サイトや他のサイトにアクセスした際の情報に基づいて、適切な広告を表示できます。ユーザーは、
+                <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Googleの広告設定</a>
+                で、パーソナライズ広告を無効にできます。また、
+                <a href="https://www.aboutads.info/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>
+                でも、第三者配信事業者のCookie使用による広告配信を無効にできます。これらの手段を取らずに当サイトを利用した場合、前条に記載した情報の送信・利用に同意したものとみなします。
+            </p>
+
+            <h2>4. ブラウザ内に保存される情報</h2>
+            <p>
+                ハイスコアやプレイデータは、ユーザーのブラウザ（localStorage）に保存されます。これらのデータは当サイトのサーバーには送信されず、当運営者は閲覧・復元できません。
+            </p>
+
+            <h2>5. お問い合わせ時の情報</h2>
+            <p>
+                お問い合わせは、外部サービス（Googleフォーム）を通じて受け付けています。入力いただいた情報は、お問い合わせへの対応および不正行為の防止の目的で利用します。
+            </p>
+
+            <h2>6. 第三者提供</h2>
+            <p>
+                当運営者は、第2条に記載した外部サービスへの情報の送信を除き、次の場合を除いて、本人の同意なく個人データを第三者に提供しません。
+            </p>
+            <ul>
+            <li>法令に基づく場合</li>
+            <li>人の生命、身体または財産の保護のために必要で、本人の同意を得ることが困難な場合</li>
+            <li>国の機関等の法令に定める事務の遂行に協力する必要がある場合</li>
+            <li>利用目的の達成に必要な範囲で、個人データの取扱いを委託する場合</li>
+            <li>事業の譲渡などに伴って、個人データが提供される場合</li>
+            </ul>
+            <p>
+                個人を特定できない形に加工した統計情報は、公表することがあります。
+            </p>
+
+            <h2>7. 広告の不正クリックについて</h2>
+            <p>
+                広告の不正クリック（自己クリック、繰り返しのクリック、自動化ツールによるクリックなど）は禁止します。不正が疑われる場合、当運営者は、該当するアクセス情報を広告事業者に提供し、アクセスを制限するなど必要な措置を講じることができます。不正クリックにより当運営者に損害が生じた場合は、その賠償を請求することがあります。
+            </p>
+
+            <h2>8. 未成年者の利用</h2>
+            <p>
+                未成年のユーザーは、保護者の同意を得たうえで当サイトをご利用ください。特に15歳未満の方は、お問い合わせなどで個人情報を入力する際、必ず保護者の同意を得てください。当サイトを利用した場合、保護者の同意を得ているものとみなします。
+            </p>
+
+            <h2>9. 免責</h2>
+            <p>
+                当運営者は、広告やリンク先の外部サイトの内容、商品・サービス、情報の取扱いについて責任を負いません。また、ユーザー自身の端末・ブラウザの設定や管理の不備、第三者による不正アクセスなどにより生じた損害について、責任を負いません。ただし、当運営者に故意または重大な過失がある場合は、この限りではありません。
+            </p>
+
+            <h2>10. 開示・訂正・利用停止などのご請求</h2>
+            <p>
+                当運営者が保有する個人データについて、開示、訂正、削除、利用停止などをご希望の場合は、<a href="contact.html">お問い合わせページ</a>からご連絡ください。本人確認のうえ、法令に従って対応します。当運営者が保有していない情報や、Cookieなど特定の個人を識別できない情報、法令上応じる義務のない請求には、応じられません。
+            </p>
+
+            <h2>11. ポリシーの変更</h2>
+            <p>
+                当運営者は、法令の変更、利用するサービスの追加・変更などに応じて、予告なく本ポリシーを変更できます。変更後のポリシーは、本ページに掲載した時点から効力を生じ、以後の利用をもって、変更後の内容に同意したものとみなします。
+            </p>
+            
+            <p style="margin-top: 28px; text-align: right; font-size: 13px; color: #8f7a66;">
+                制定日：2026年10月8日
+            </p>
+        </article>
+
+
+    </main>
+
+    <!-- フッターエリア -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

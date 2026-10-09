@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazy Arcade | 暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集</title>
+    
+    <!-- タブのアイコン（ファビコン）: 足のないゆるカワナマケモノ顔SVG -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ最適化 -->
+    <meta name="description" content="Lazy Arcade（レイジーアーケード）は、PC・スマホでダウンロードなし＆完全無料で遊べる暇つぶしWebミニゲームポータルサイト。2048、ピンボール、クレーンゲーム、アクションパズルなどサクッと遊べる無料ゲームが盛りだくさん！">
+    <meta name="keywords" content="Lazy Arcade, 無料ゲーム, ブラウザゲーム, フリーゲーム, スマホゲーム, PCゲーム, 暇つぶし, 2048, レトロゲーム">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/index.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+
+    <!-- OGP (SNS連携・シェア最適化) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Lazy Arcade | 暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集">
+    <meta property="og:description" content="ダウンロード・登録不要！スマホやPCのブラウザで今すぐゆる〜く遊べる無料ミニゲーム集。ちょっとしたスキマ時間に挑戦しよう！">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/index.html">
+    <meta property="og:site_name" content="Lazy Arcade">
+    <! ---  meta property="og:image" content="https://example.com/images/ogp-main.jpg" -- TODO: OGP画像URLを変更 -->
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Lazy Arcade | 暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集">
+    <meta name="twitter:description" content="サクッと遊べる無料Webゲームポータル！">
+
+    <!-- 構造化データ (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://tscode1998.github.io/kusogames/#website",
+      "url": "https://tscode1998.github.io/kusogames/",
+      "name": "Lazy Arcade",
+      "description": "PC・スマートフォンで遊べる完全無料のブラウザゲームポータルサイト",
+      "inLanguage": "ja"
+    }
+    </script>
+
+    <style>
+        /* ==========================================================================
+           1. CSS Variables & Reset
+           ========================================================================== */
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ==========================================================================
+           2. Header Area & Site Logo
+           ========================================================================== */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        /* 左上のサイトマーク/ロゴ枠 */
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+            letter-spacing: 0;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag-pill {
+            background: #eee4da;
+            color: #776e65;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        /* ヘッダー右上ビジュアル */
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* ==========================================================================
+           3. AdSense Slot
+           ========================================================================== */
+        .adsense-slot {
+            margin: 35px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ==========================================================================
+           4. Section Common & SEO Concepts
+           ========================================================================== */
+        section {
+            margin-bottom: 45px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: var(--text-sub);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 22px;
+            background-color: var(--accent-orange);
+            border-radius: 4px;
+        }
+
+        /* SEO解説文ブロック */
+        .about-portal {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #f2ede4;
+        }
+
+        .about-portal h2 {
+            font-size: 18px;
+            color: #776e65;
+            margin-bottom: 12px;
+        }
+
+        .about-portal p {
+            font-size: 14px;
+            color: #665f57;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .about-portal p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ==========================================================================
+           5. 全ゲーム一覧 (カードデザイン)
+           ========================================================================== */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #f0ece1;
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: #edc22e;
+        }
+
+        .card-header-icon {
+            height: 100px;
+            background: #f2ede4;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            color: #776e65;
+        }
+
+        .game-card h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .game-card p {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .genre-tag {
+            font-size: 11px;
+            background: #f5f0e6;
+            color: #8f7a66;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .btn-play {
+            background: var(--accent-orange);
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px 14px;
+            border-radius: 20px;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-play:hover {
+            background: var(--accent-red);
+        }
+
+        .game-card .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #faf8ef;
+        }
+
+        /* ==========================================================================
+           6. Footer Area
+           ========================================================================== */
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        /* ==========================================================================
+           7. Responsive Design
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-left {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 90px;
+                margin-top: 10px;
+            }
+
+            .header-tags {
+                justify-content: center;
+            }
+
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダーエリア -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <!-- 左上のサイトマーク (足のないゆるカワナマケモノ顔SVG) -->
+                <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                        <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                        <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                        <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                        <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                        <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                        <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                        <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                        <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                        <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                        <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                
+                <div class="header-content">
+                    <h1 class="site-title">
+                        Lazy Arcade
+                        <span>完全無料</span>
+                    </h1>
+                    <p class="site-description">
+                        暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                    </p>
+                    <div class="header-tags">
+                        <span class="tag-pill">🎮 無料ブラウザゲーム</span>
+                        <span class="tag-pill">📱 スマホ対応</span>
+                        <span class="tag-pill">⚡ 登録不要</span>
+                        <span class="tag-pill">💾 セーブ機能対応</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ヘッダー右上ビジュアル領域 -->
+            <div class="header-visual" aria-label="ポータル象徴ビジュアル">
+                <div class="header-visual-icon">🕹️</div>
+                <div class="header-visual-text">HTML5 WEB GAMES</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- AdSense 広告枠 1 -->
+        <div class="adsense-slot">
+            <div class="adsense-label">スポンサーリンク</div>
+            <!-- Google AdSense ディスプレイ広告コードなどをここに配置 -->
+        <!-- admax -->
+        <script src="https://adm.shinobi.jp/o/1c72557916043bbe6121205054b1ece0"></script>
+        <!-- admax -->
+
+
+        </div>
+
+        <!-- 独自コンテンツ・ポータル紹介 (AdSenseポリシー対策) -->
+        <section class="about-portal">
+            <h2>Lazy Arcade へようこそ！</h2>
+            <p>
+                当サイト「Lazy Arcade（レイジーアーケード）」は、HTML5およびJavaScriptを用いて制作されたオリジナルのブラウザゲームを集めた無料ポータルサイトです。
+                ちょっとしたスキマ時間や息息抜きに、アプリのダウンロード不要でブラウザから即起動できます。
+            </p>
+            <p>
+                ハイスコアやプレイデータはブラウザ（localStorage）に自動で安全に保存されるため、いつでも続きから挑戦可能です。
+                定番ゲームから、直感的なアクション、短時間で決着がつくタイムアタックゲームまで幅広く取り揃えています。
+            </p>
+        </section>
+
+        <!-- AdSense 広告枠 2 -->
+        <!-- <div class="adsense-slot"> -->
+        <!--    <div class="adsense-label">スポンサーリンク</div> -->
+            <!-- Google AdSense インフィード/レスポンシブ広告コード -->
+        <!-- admax -->
+        <!-- <script src="https://adm.shinobi.jp/o/aabcb640963e6d8e03b38b1bebd6de10"></script> -->
+        <!-- admax -->
+        <!-- </div> -->
+
+        <!-- 収録ゲーム一覧（カードデザイン） -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">全収録ゲーム一覧（11作品）</h2>
+            </div>
+
+            <div class="game-grid">
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🏃</div>
+                    <h3>DOT RUNNER</h3>
+                    <p>タップやスペースキーで障害物を回避する爆速ドットゲーム。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">アクション</span>
+                        <a href="104_dot_runner.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🐧</div>
+                    <h3>ペンギンぺんぺん</h3>
+                    <p>30秒間でペンギンをぺんぺんしよう！爽快連打ゲーム。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">カジュアル</span>
+                        <a href="111penguin-penpen.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">💣</div>
+                    <h3>BOMB SURVIVOR</h3>
+                    <p>火の粉をよけて長い時間生き残ろう！スリリングサバイバル。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">アクション</span>
+                        <a href="105_BOMBSURVIVOR.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🎰</div>
+                    <h3>30秒ピンボール</h3>
+                    <p>ハイスコアを狙う短時間ピンボール。物理挙動を乗りこなせ！</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">アーケード</span>
+                        <a href="110pinball30.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🧸</div>
+                    <h3>もふもふクレーン</h3>
+                    <p>30秒でたくさん景品を取ろう！直感操作のアクションクレーン。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">カジュアル</span>
+                        <a href="109_mofumofu-crane.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">⏱️</div>
+                    <h3>5秒チャレンジ</h3>
+                    <p>ストップウォッチで5秒ピッタリを目指そう！体内時計テスト。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">タイミング</span>
+                        <a href="106_5sec-challenge.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🍄</div>
+                    <h3>きのこ or たけのこ？</h3>
+                    <p>きのこ、たけのこを見極めて瞬時に仕分ける反射神経ゲーム。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">パズル/判断</span>
+                        <a href="107_kinoko_or_takenoko.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🏌️</div>
+                    <h3>ドライバーフルスイング</h3>
+                    <p>パワーとミートを極めて、大空へ向かってフルスイング！</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">スポーツ</span>
+                        <a href="108_driver-full-swing.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🧱</div>
+                    <h3>BLOCKS</h3>
+                    <p>ボールを打ち返してブロックを消していく定番レトロブロック崩し。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">レトロ</span>
+                        <a href="102_blocks.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🐍</div>
+                    <h3>スネークゲーム</h3>
+                    <p>エサを食べて伸びるヘビを操作。壁や自分の体にぶつからないよう操作！</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">レトロ</span>
+                        <a href="103_snake_game.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+                <article class="game-card">
+                    <div class="card-header-icon" aria-hidden="true">🔢</div>
+                    <h3>2048</h3>
+                    <p>同じ数字を重ねて「2048」を目指す、定番中毒パズルゲーム。</p>
+                    <div class="card-footer">
+                        <span class="genre-tag">思考パズル</span>
+                        <a href="101_2048.html" class="btn-play">プレイ ▶</a>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Google AdSense 審査承認基準に適合するフッターエリア -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

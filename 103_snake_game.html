@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>スネークゲーム | エサを食べて伸びる定番ヘビゲーム（無料） | Lazy Arcade</title>
+
+    <!-- ===== 共通部分: ファビコン（index.html と同じ） ===== -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ（ゲームごとに変更） -->
+    <meta name="description" content="エサを食べるほど長くなるヘビを操作して、壁や自分の体にぶつからずにハイスコアを狙うスネークゲーム。PCは矢印キー、スマホは画面の方向ボタンで操作できます。無料・登録不要。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/103_snake_game.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="スネークゲーム | エサを食べて伸びる定番ヘビゲーム（無料） | Lazy Arcade">
+    <meta property="og:description" content="ヘビを操作してエサを食べよう！壁や自分の体にぶつからないように高得点を狙う無料ゲーム。">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/103_snake_game.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+    <meta property="og:site_name" content="Lazy Arcade">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- ===== 共通部分: サイト共通CSS（index.html / contact.html 準拠）。修正するときは 101〜111 の全ゲームページで同じ内容に更新してください ===== -->
+    <style>
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* index.html の margin/padding リセット。ゲーム領域（.game-stage）には適用しない（ゲームの余白を変えないため） */
+        :where(:not(.game-stage):not(.game-stage *)) {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .site-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+            letter-spacing: 0;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） */
+        .page-nav-bar {
+            margin: 24px 0 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eee4da;
+            color: #776e65;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #8f7a66;
+            color: #ffffff;
+        }
+
+        /* AdSense Slot */
+        .adsense-slot {
+            margin: 35px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        /* Responsive（index.html の @media (max-width: 768px) を踏襲） */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-logo-link {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 72px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            /* ゲームページ用: ゲームが画面外に押し出されないよう、ヘッダー・広告の縦幅を詰める */
+            .site-header {
+                padding: 14px 0;
+            }
+
+            .site-description {
+                display: none;
+            }
+
+            .page-nav-bar {
+                margin: 14px 0 0;
+            }
+
+            .adsense-slot {
+                margin: 16px 0;
+            }
+        }
+    </style>
+
+    <!-- ゲーム固有CSS（ゲーム本体のスタイル。セレクタの付け替え以外は元のまま） -->
+    <style>
+        :where(.game-stage), :where(.game-stage) * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* 旧 body のスタイルをゲーム領域へ移設（サイト共通部分と干渉しないよう .game-stage に限定）。
+           background / margin / min-height は削除、padding は左右0（main の余白と二重にならないため） */
+        .game-stage {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #333333;
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: normal;
+            margin-bottom: 30px;
+        }
+
+
+        .game-container {
+            background-color: #2b2b2b;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 12px;
+            color: #f4f1ea;
+        }
+
+        :where(.game-stage) h1 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: 2px;
+            color: #8bc34a;
+        }
+
+        .stats {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stat-box {
+            background: #1e1e1e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: center;
+            min-width: 55px;
+            border: 1px solid #444;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: #aaa;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        canvas#game {
+            background-color: #151515;
+            border: 2px solid #444;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .ctrl-btn {
+            background: #3a3a3a;
+            color: #f4f1ea;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 0 #1f1f1f;
+        }
+
+        .ctrl-btn:active {
+            background: #555;
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .ctrl-btn.empty {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .footer-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-reset {
+            background-color: #8bc34a;
+            color: #1e1e1e;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-reset:active {
+            background-color: #689f38;
+        }
+
+        .instructions {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #777;
+            text-align: center;
+        }
+
+        /* 広告用モーダルのスタイル */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            overflow: hidden;
+        }
+
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 共通部分: サイトヘッダー（contact.html と同じ構成。右のビジュアルだけゲームごとに変更）。修正時は全ゲームページを更新 ===== -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <a href="index.html" class="site-logo-link">
+                    <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                            <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                            <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                            <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                            <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                            <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                            <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                            <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                            <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="header-content">
+                        <h1 class="site-title">
+                            Lazy Arcade
+                            <span>完全無料</span>
+                        </h1>
+                        <p class="site-description">
+                            暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ゲームごとに変更: 現在のゲームのアイコンと名前 -->
+            <div class="header-visual" aria-label="プレイ中のゲーム: SNAKE">
+                <div class="header-visual-icon" aria-hidden="true">🐍</div>
+                <div class="header-visual-text">SNAKE</div>
+            </div>
+        </div>
+    </header>
+    <!-- ===== /共通部分: サイトヘッダー ===== -->
+
+    <main class="container">
+
+        <!-- ===== 共通部分: 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） ===== -->
+        <div class="page-nav-bar">
+            <a href="index.html" class="btn-back">◀ ゲーム一覧（トップページ）へ戻る</a>
+        </div>
+
+        <!-- ===== 共通部分: 広告枠（ゲームエリアの上）。広告コードは index.html と同じく空のまま ===== -->
+        <div class="adsense-slot">
+            <div class="adsense-label">スポンサーリンク</div>
+            <!-- Google AdSense ディスプレイ広告コードなどをここに配置 -->
+            <!-- admax -->
+            <script src="https://adm.shinobi.jp/o/1c72557916043bbe6121205054b1ece0"></script>
+            <!-- admax -->
+        </div>
+
+        <!-- ゲームエリア（以下、ゲーム固有。.game-stage の中だけがゲームの操作領域） -->
+        <div class="game-stage">
+    <div class="game-container">
+        <div class="header-panel">
+            <h1>SNAKE</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">SCORE</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">BEST</div>
+                    <div class="stat-value" id="highScore">0</div>
+                </div>
+            </div>
+        </div>
+
+        <canvas id="game" width="280" height="280"></canvas>
+
+        <div class="controls">
+            <div class="ctrl-btn empty"></div>
+            <button class="ctrl-btn" id="btn-up">▲</button>
+            <div class="ctrl-btn empty"></div>
+            <button class="ctrl-btn" id="btn-left">◀</button>
+            <button class="ctrl-btn" id="btn-down">▼</button>
+            <button class="ctrl-btn" id="btn-right">▶</button>
+        </div>
+
+        <div class="footer-panel" style="margin-top: 12px;">
+            <button class="btn-reset" onclick="resetGame()">リセット / スタート</button>
+        </div>
+    </div>
+
+    <div class="instructions">
+        PC: 矢印キー (↑ ↓ ← →) で操作
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- admax -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+                <!-- admax -->
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+        </div>
+        <!-- /ゲームエリア -->
+
+    </main>
+
+    <!-- ===== 共通部分: サイトフッター（index.html と同じ）。修正時は全ゲームページを更新 ===== -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
+    <!-- ===== /共通部分: サイトフッター ===== -->
+
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const adModal = document.getElementById('adModal');
+
+        const gridSize = 14; // 280 / 20px per cell = 14x14 grid
+        const tileSize = 20;
+
+        let snake = [];
+        let food = { x: 0, y: 0 };
+        let dx = tileSize;
+        let dy = 0;
+        let score = 0;
+        let highScore = localStorage.getItem('snake_highscore') || 0;
+        let gameInterval = null;
+        let isGameOver = false;
+
+        document.getElementById('highScore').innerText = highScore;
+
+        function initGame() {
+            snake = [
+                { x: 5 * tileSize, y: 7 * tileSize },
+                { x: 4 * tileSize, y: 7 * tileSize },
+                { x: 3 * tileSize, y: 7 * tileSize }
+            ];
+            dx = tileSize;
+            dy = 0;
+            score = 0;
+            isGameOver = false;
+            document.getElementById('score').innerText = score;
+            spawnFood();
+
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(gameLoop, 120);
+        }
+
+        function spawnFood() {
+            food.x = Math.floor(Math.random() * gridSize) * tileSize;
+            food.y = Math.floor(Math.random() * gridSize) * tileSize;
+
+            // Don't spawn food inside snake
+            snake.forEach(segment => {
+                if (segment.x === food.x && segment.y === food.y) {
+                    spawnFood();
+                }
+            });
+        }
+
+        function gameLoop() {
+            if (isGameOver) return;
+
+            // Move Snake Head
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // Wall Collision
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                return triggerGameOver();
+            }
+
+            // Self Collision
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return triggerGameOver();
+                }
+            }
+
+            snake.unshift(head);
+
+            // Food Collision
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById('score').innerText = score;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('snake_highscore', highScore);
+                    document.getElementById('highScore').innerText = highScore;
+                }
+                spawnFood();
+            } else {
+                snake.pop(); // Remove tail
+            }
+
+            draw();
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#151515';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Food
+            ctx.fillStyle = '#ff5252';
+            ctx.beginPath();
+            ctx.arc(food.x + tileSize / 2, food.y + tileSize / 2, tileSize / 2 - 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Snake
+            snake.forEach((segment, index) => {
+                ctx.fillStyle = index === 0 ? '#8bc34a' : '#689f38'; // Head is brighter
+                ctx.fillRect(segment.x + 1, segment.y + 1, tileSize - 2, tileSize - 2);
+            });
+        }
+
+        function changeDirection(newDx, newDy) {
+            if (adModal.style.display === 'flex' || isGameOver) return;
+            // Prevent 180 degree reverse
+            if (dx === -newDx && dy === -newDy) return;
+            if (dx === newDx && dy === newDy) return;
+            dx = newDx;
+            dy = newDy;
+        }
+
+        function triggerGameOver() {
+            isGameOver = true;
+            clearInterval(gameInterval);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ff5252';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px sans-serif';
+            ctx.fillText('Score: ' + score, canvas.width / 2, canvas.height / 2 + 15);
+
+            handleGameOver();
+        }
+
+        function handleGameOver() {
+            setTimeout(() => {
+                adModal.style.display = 'flex';
+            }, 1000);
+        }
+
+        function closeAdModal() {
+            adModal.style.display = 'none';
+            resetGame();
+        }
+
+        function resetGame() {
+            if (adModal.style.display === 'flex') return;
+            initGame();
+        }
+
+        // Controls (Keyboard)
+        document.addEventListener('keydown', e => {
+            if (adModal.style.display === 'flex') return;
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) e.preventDefault(); // 矢印キーでページがスクロールしないように
+            if (e.key === 'ArrowUp') changeDirection(0, -tileSize);
+            else if (e.key === 'ArrowDown') changeDirection(0, tileSize);
+            else if (e.key === 'ArrowLeft') changeDirection(-tileSize, 0);
+            else if (e.key === 'ArrowRight') changeDirection(tileSize, 0);
+        });
+
+        // Controls (Touch Buttons)
+        document.getElementById('btn-up').addEventListener('click', () => changeDirection(0, -tileSize));
+        document.getElementById('btn-down').addEventListener('click', () => changeDirection(0, tileSize));
+        document.getElementById('btn-left').addEventListener('click', () => changeDirection(-tileSize, 0));
+        document.getElementById('btn-right').addEventListener('click', () => changeDirection(tileSize, 0));
+
+        // Start
+        initGame();
+    </script>
+</body>
+</html>

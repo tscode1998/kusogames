@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>きのこ or たけのこ？ | 瞬時に仕分ける無料の反射神経ゲーム | Lazy Arcade</title>
+
+    <!-- ===== 共通部分: ファビコン（index.html と同じ） ===== -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ（ゲームごとに変更） -->
+    <meta name="description" content="きのこ・たけのこを見極めて、左右に仕分ける反射神経ゲーム。赤いキノコ（毒）や緑のタケノコ（偽）は破棄！ボタン・キーボード・フリックで操作でき、ベストタイムは自動保存されます。無料・登録不要。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/107_kinoko_or_takenoko.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="きのこ or たけのこ？ | 瞬時に仕分ける無料の反射神経ゲーム | Lazy Arcade">
+    <meta property="og:description" content="きのこ？たけのこ？瞬時に見極めて仕分けよう！無料の反射神経ゲーム。">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/107_kinoko_or_takenoko.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+    <meta property="og:site_name" content="Lazy Arcade">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- ===== 共通部分: サイト共通CSS（index.html / contact.html 準拠）。修正するときは 101〜111 の全ゲームページで同じ内容に更新してください ===== -->
+    <style>
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* index.html の margin/padding リセット。ゲーム領域（.game-stage）には適用しない（ゲームの余白を変えないため） */
+        :where(:not(.game-stage):not(.game-stage *)) {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .site-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+            letter-spacing: 0;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） */
+        .page-nav-bar {
+            margin: 24px 0 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eee4da;
+            color: #776e65;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #8f7a66;
+            color: #ffffff;
+        }
+
+        /* AdSense Slot */
+        .adsense-slot {
+            margin: 35px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        /* Responsive（index.html の @media (max-width: 768px) を踏襲） */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-logo-link {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 72px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            /* ゲームページ用: ゲームが画面外に押し出されないよう、ヘッダー・広告の縦幅を詰める */
+            .site-header {
+                padding: 14px 0;
+            }
+
+            .site-description {
+                display: none;
+            }
+
+            .page-nav-bar {
+                margin: 14px 0 0;
+            }
+
+            .adsense-slot {
+                margin: 16px 0;
+            }
+        }
+    </style>
+
+    <!-- ゲーム固有CSS（ゲーム本体のスタイル。セレクタの付け替え以外は元のまま） -->
+    <style>
+        :where(.game-stage), :where(.game-stage) * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        /* 旧 body のスタイルをゲーム領域へ移設（サイト共通部分と干渉しないよう .game-stage に限定）。
+           background / margin / min-height は削除、padding は左右0（main の余白と二重にならないため） */
+        .game-stage {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            touch-action: manipulation;
+            line-height: normal;
+            margin-bottom: 30px;
+        }
+        :where(.game-stage) .container {
+            padding: 0; /* サイトの .container の左右paddingを打ち消す */
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        :where(.game-stage) h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #776e65;
+        }
+        .scores {
+            display: flex;
+            gap: 6px;
+        }
+        .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 55px;
+        }
+        .score-box span {
+            display: block;
+            font-size: 12px;
+            margin-top: 1px;
+        }
+        canvas {
+            background-color: #8f7a66;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            touch-action: none;
+        }
+
+        /* Action control buttons for clear, mistake-free tapping */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .act-btn {
+            background: #8f7a66;
+            color: white;
+            border: 2px solid #a3907c;
+            padding: 10px 4px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .act-btn:active {
+            background: #776e65;
+            transform: translateY(1px);
+        }
+        .act-btn-discard {
+            background: #d9534f;
+            border-color: #c9302c;
+        }
+        .act-btn-discard:active {
+            background: #ac2925;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            font-size: 10px;
+            color: #8f7a66;
+            text-align: left;
+            line-height: 1.3;
+        }
+        .btn-reset {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-reset:active {
+            background: #776e65;
+        }
+
+        /* 広告モーダル用CSS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 共通部分: サイトヘッダー（contact.html と同じ構成。右のビジュアルだけゲームごとに変更）。修正時は全ゲームページを更新 ===== -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <a href="index.html" class="site-logo-link">
+                    <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                            <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                            <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                            <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                            <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                            <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                            <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                            <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                            <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="header-content">
+                        <h1 class="site-title">
+                            Lazy Arcade
+                            <span>完全無料</span>
+                        </h1>
+                        <p class="site-description">
+                            暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ゲームごとに変更: 現在のゲームのアイコンと名前 -->
+            <div class="header-visual" aria-label="プレイ中のゲーム: きのこ or たけのこ？">
+                <div class="header-visual-icon" aria-hidden="true">🍄</div>
+                <div class="header-visual-text">きのこ or たけのこ？</div>
+            </div>
+        </div>
+    </header>
+    <!-- ===== /共通部分: サイトヘッダー ===== -->
+
+    <main class="container">
+
+        <!-- ===== 共通部分: 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） ===== -->
+        <div class="page-nav-bar">
+            <a href="index.html" class="btn-back">◀ ゲーム一覧（トップページ）へ戻る</a>
+        </div>
+
+        <!-- ===== 共通部分: 広告枠（ゲームエリアの上）。広告コードは index.html と同じく空のまま ===== -->
+        <div class="adsense-slot">
+            <div class="adsense-label">スポンサーリンク</div>
+            <!-- Google AdSense ディスプレイ広告コードなどをここに配置 -->
+        </div>
+
+        <!-- ゲームエリア（以下、ゲーム固有。.game-stage の中だけがゲームの操作領域） -->
+        <div class="game-stage">
+    <div class="container">
+
+        <div class="header">
+            <h1>きのこ or たけのこ？</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0.00s</span></div>
+                <div class="score-box">BEST<span id="best">0.00s</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <!-- Dynamic Action Buttons -->
+        <div class="action-buttons">
+            <button class="act-btn" onclick="handleAction('LEFT')">
+                <span style="font-size: 16px;">👈 きのこ</span>
+                <span style="font-size: 9px; opacity: 0.8; margin-top:2px;">[← / A / 左フリック]</span>
+            </button>
+            <button class="act-btn act-btn-discard" onclick="handleAction('DISCARD')">
+                <span style="font-size: 16px;">🗑️ 破棄</span>
+                <span style="font-size: 9px; opacity: 0.8; margin-top:2px;">[↑ / W / 上フリック]</span>
+            </button>
+            <button class="act-btn" onclick="handleAction('RIGHT')">
+                <span style="font-size: 16px;">たけのこ 👉</span>
+                <span style="font-size: 9px; opacity: 0.8; margin-top:2px;">[→ / D / 右フリック]</span>
+            </button>
+        </div>
+
+        <div class="controls">
+            <div class="info">⚠️ 赤キノコ(毒)＆緑タケノコ(偽)は【破棄】！</div>
+            <button class="btn-reset" id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- 忍者admaxスクリプト -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+        </div>
+        <!-- /ゲームエリア -->
+
+        <!-- ===== 共通部分: 広告枠（ゲームエリアの下）。広告コードは index.html と同じく空のまま ===== -->
+        <div class="adsense-slot">
+            <div class="adsense-label">スポンサーリンク</div>
+            <!-- Google AdSense インフィード/レスポンシブ広告コード -->
+        </div>
+
+    </main>
+
+    <!-- ===== 共通部分: サイトフッター（index.html と同じ）。修正時は全ゲームページを更新 ===== -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
+    <!-- ===== /共通部分: サイトフッター ===== -->
+
+    <script>
+        // ==========================================
+        // CONFIGURABLE PARAMETERS
+        // ==========================================
+        const PARAM_MAX_ACCEL_TIME = 30.0;       // Seconds until speed/spawn frequency caps out
+        const PARAM_INITIAL_SPEED = 2.0;        // Initial falling speed (px/frame)
+        const PARAM_MAX_SPEED = 7.5;            // Max falling speed (px/frame)
+        const PARAM_INITIAL_SPAWN_INTERVAL = 90; // Initial spawn delay (frames)
+        const PARAM_MIN_SPAWN_INTERVAL = 25;     // Min spawn delay (frames)
+        const PARAM_FAKE_APPEAR_TIME = 3.0;     // Seconds when fakes start spawning
+
+        // DOM elements
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const bestElement = document.getElementById('best');
+
+        // State variables
+        let gameState = 'START'; // 'START', 'PLAYING', 'GAMEOVER'
+        let startTime = 0;
+        let elapsedTime = 0;
+        let bestTime = parseFloat(localStorage.getItem('kinoko_takenoko_best_v2')) || 0;
+        let items = [];
+        let spawnTimer = 0;
+        let animationFrameId = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // Evaluation outputs
+        let finalGrade = '';
+        let finalComment = '';
+
+        bestElement.textContent = bestTime.toFixed(2) + 's';
+
+        // Item classification types
+        const TYPE_KINOKO = 'KINOKO';               // Sort LEFT
+        const TYPE_TAKENOKO = 'TAKENOKO';           // Sort RIGHT
+        const TYPE_POISON_KINOKO = 'POISON_KINOKO'; // Discard (UP / TRASH)
+        const TYPE_FAKE_TAKENOKO = 'FAKE_TAKENOKO'; // Discard (UP / TRASH)
+
+        function resetGame() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            gameState = 'PLAYING';
+            startTime = performance.now();
+            elapsedTime = 0;
+            items = [];
+            spawnTimer = 0;
+            scoreElement.textContent = '0.00s';
+            
+            spawnItem();
+            gameLoop();
+        }
+
+        function handleGameOver(reason) {
+            gameState = 'GAMEOVER';
+            
+            // Tiered evaluation (3 levels: 〇, △, ×)
+            if (elapsedTime >= 25.0) {
+                finalGrade = '〇';
+                finalComment = '神級の仕分け職人！全見極め成功！';
+            } else if (elapsedTime >= 10.0) {
+                finalGrade = '△';
+                finalComment = 'そこそこの仕分け力！毒に注意！';
+            } else {
+                finalGrade = '×';
+                finalComment = '偽物・毒に騙されました…出直し！';
+            }
+
+            // Save best score
+            if (elapsedTime > bestTime) {
+                bestTime = elapsedTime;
+                localStorage.setItem('kinoko_takenoko_best_v2', bestTime.toString());
+                bestElement.textContent = bestTime.toFixed(2) + 's';
+            }
+
+            draw();
+
+            // Open ad modal after 300ms
+            setTimeout(() => {
+                document.getElementById('adModal').style.display = 'flex';
+            }, 300);
+        }
+
+        function closeAdModal() {
+            document.getElementById('adModal').style.display = 'none';
+            resetGame();
+        }
+
+        function isInputDisabled() {
+            const adModal = document.getElementById('adModal');
+            return adModal && adModal.style.display === 'flex';
+        }
+
+        function spawnItem() {
+            const rand = Math.random();
+            let type;
+
+            if (elapsedTime > PARAM_FAKE_APPEAR_TIME && rand < 0.35) {
+                // Spawn fake or poison item
+                type = Math.random() < 0.5 ? TYPE_POISON_KINOKO : TYPE_FAKE_TAKENOKO;
+            } else {
+                // Spawn genuine item
+                type = Math.random() < 0.5 ? TYPE_KINOKO : TYPE_TAKENOKO;
+            }
+
+            items.push({
+                x: 160 + (Math.random() * 20 - 10),
+                y: 20,
+                type: type,
+                state: 'FALLING' // 'FALLING', 'SORTED_LEFT', 'SORTED_RIGHT', 'DISCARDED'
+            });
+        }
+
+        // Action input handler (LEFT, RIGHT, DISCARD)
+        function handleAction(action) {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+                return;
+            }
+
+            if (gameState !== 'PLAYING') return;
+
+            // Find lowest falling item closest to bottom
+            let targetItem = null;
+            let maxY = -1;
+            for (let item of items) {
+                if (item.state === 'FALLING' && item.y > maxY) {
+                    maxY = item.y;
+                    targetItem = item;
+                }
+            }
+
+            if (!targetItem) return;
+
+            let isCorrect = false;
+
+            if (action === 'LEFT' && targetItem.type === TYPE_KINOKO) {
+                isCorrect = true;
+                targetItem.state = 'SORTED_LEFT';
+            } else if (action === 'RIGHT' && targetItem.type === TYPE_TAKENOKO) {
+                isCorrect = true;
+                targetItem.state = 'SORTED_RIGHT';
+            } else if (action === 'DISCARD' && (targetItem.type === TYPE_POISON_KINOKO || targetItem.type === TYPE_FAKE_TAKENOKO)) {
+                isCorrect = true;
+                targetItem.state = 'DISCARDED';
+            }
+
+            if (!isCorrect) {
+                handleGameOver("WRONG_SORT");
+            }
+        }
+
+        function update() {
+            if (gameState !== 'PLAYING') return;
+
+            elapsedTime = (performance.now() - startTime) / 1000;
+            scoreElement.textContent = elapsedTime.toFixed(2) + 's';
+
+            // Calculate current difficulty based on elapsed time (up to 30s)
+            const progress = Math.min(elapsedTime / PARAM_MAX_ACCEL_TIME, 1.0);
+            const currentSpeed = PARAM_INITIAL_SPEED + (PARAM_MAX_SPEED - PARAM_INITIAL_SPEED) * progress;
+            const currentSpawnInterval = PARAM_INITIAL_SPAWN_INTERVAL - (PARAM_INITIAL_SPAWN_INTERVAL - PARAM_MIN_SPAWN_INTERVAL) * progress;
+
+            spawnTimer++;
+            if (spawnTimer >= currentSpawnInterval) {
+                spawnItem();
+                spawnTimer = 0;
+            }
+
+            const finishLineY = 320;
+            for (let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+
+                if (item.state === 'FALLING') {
+                    item.y += currentSpeed;
+
+                    if (item.y >= finishLineY) {
+                        handleGameOver("MISSED_ITEM");
+                        return;
+                    }
+                } else if (item.state === 'SORTED_LEFT') {
+                    item.x -= 20;
+                    item.y -= 3;
+                } else if (item.state === 'SORTED_RIGHT') {
+                    item.x += 20;
+                    item.y -= 3;
+                } else if (item.state === 'DISCARDED') {
+                    item.y -= 22; // Fly upwards to trash
+                }
+
+                // Cleanup offscreen items
+                if (item.x < -60 || item.x > 380 || item.y < -60) {
+                    items.splice(i, 1);
+                }
+            }
+        }
+
+        function drawItem(item) {
+            ctx.save();
+            ctx.translate(item.x, item.y);
+
+            if (item.type === TYPE_KINOKO) {
+                // --- 本物 きのこの山 ---
+                // Stalk
+                ctx.fillStyle = '#f3e5ab';
+                ctx.beginPath();
+                ctx.roundRect(-4, 0, 8, 22, 3);
+                ctx.fill();
+                ctx.strokeStyle = '#c8b48c';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Chocolate Cap
+                ctx.fillStyle = '#5a3d28';
+                ctx.beginPath();
+                ctx.arc(0, 0, 16, Math.PI, 0, false);
+                ctx.quadraticCurveTo(0, 6, 0, 6);
+                ctx.fill();
+
+            } else if (item.type === TYPE_TAKENOKO) {
+                // --- 本物 たけのこの里 ---
+                // Cookie base
+                ctx.fillStyle = '#f5e0b3';
+                ctx.beginPath();
+                ctx.ellipse(0, 14, 13, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cone
+                ctx.fillStyle = '#4a2e18';
+                ctx.beginPath();
+                ctx.moveTo(0, -18);
+                ctx.lineTo(14, 14);
+                ctx.lineTo(-14, 14);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ridges
+                ctx.strokeStyle = '#6b4426';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-9, 5); ctx.lineTo(9, 5);
+                ctx.moveTo(-6, -3); ctx.lineTo(6, -3);
+                ctx.stroke();
+
+            } else if (item.type === TYPE_POISON_KINOKO) {
+                // --- 赤の毒きのこ (要破棄) ---
+                ctx.fillStyle = '#e2d4a8';
+                ctx.beginPath();
+                ctx.roundRect(-4, 0, 8, 22, 3);
+                ctx.fill();
+
+                // Bright red toxic cap
+                ctx.fillStyle = '#ff2a2a';
+                ctx.beginPath();
+                ctx.arc(0, 0, 17, Math.PI, 0, false);
+                ctx.fill();
+
+                // White dots
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(-7, -7, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6, -8, 2.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(0, -12, 2.5, 0, Math.PI * 2); ctx.fill();
+
+                // Clear Warning Label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('☠️毒', 0, -18);
+
+            } else if (item.type === TYPE_FAKE_TAKENOKO) {
+                // --- 緑の偽たけのこ (要破棄) ---
+                ctx.fillStyle = '#d4c090';
+                ctx.beginPath();
+                ctx.ellipse(0, 14, 13, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Bright Green fake shoot
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.moveTo(0, -18);
+                ctx.lineTo(14, 14);
+                ctx.lineTo(-14, 14);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ridges
+                ctx.strokeStyle = '#047857';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-9, 5); ctx.lineTo(9, 5);
+                ctx.moveTo(-6, -3); ctx.lineTo(6, -3);
+                ctx.stroke();
+
+                // Clear Warning Label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('⚠️偽', 0, -20);
+            }
+
+            ctx.restore();
+        }
+
+        function draw() {
+            // Background
+            ctx.fillStyle = '#8f7a66';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Left / Right / Trash Drop Zones
+            // Left Zone
+            ctx.fillStyle = 'rgba(240, 220, 190, 0.12)';
+            ctx.fillRect(0, 50, 110, canvas.height - 50);
+            // Trash Top Zone
+            ctx.fillStyle = 'rgba(217, 83, 79, 0.2)';
+            ctx.fillRect(110, 0, 100, 50);
+            // Right Zone
+            ctx.fillStyle = 'rgba(200, 240, 210, 0.12)';
+            ctx.fillRect(210, 50, 110, canvas.height - 50);
+
+            // Dividing Guides
+            ctx.strokeStyle = '#a3907c';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(110, 50); ctx.lineTo(110, canvas.height);
+            ctx.moveTo(210, 50); ctx.lineTo(210, canvas.height);
+            ctx.moveTo(110, 50); ctx.lineTo(210, 50);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Bottom Danger line
+            ctx.strokeStyle = '#f65e3b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, 320);
+            ctx.lineTo(320, 320);
+            ctx.stroke();
+
+            // Top Trash Label
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🗑️ 毒・偽物は破棄！', 160, 30);
+
+            // Side Zone Labels
+            ctx.fillStyle = '#f9f6f2';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('👈 きのこ', 55, 360);
+            ctx.fillText('たけのこ 👉', 265, 360);
+
+            // Draw falling items
+            for (let item of items) {
+                drawItem(item);
+            }
+
+            // Start Screen Overlay
+            if (gameState === 'START') {
+                ctx.fillStyle = 'rgba(0,0,0,0.65)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 20px -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('きのこ or たけのこ？', 160, 110);
+
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillStyle = '#ffd166';
+                ctx.fillText('【ルール解説】', 160, 150);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('🍄 きのこ → [左仕分け]', 160, 180);
+                ctx.fillText('🎍 たけのこ → [右仕分け]', 160, 205);
+                ctx.fillText('☠️ 赤きのこ・緑たけのこ → [破棄]', 160, 230);
+
+                ctx.fillStyle = '#f65e3b';
+                ctx.fillRect(70, 275, 180, 44);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText('スタート！', 160, 302);
+            }
+
+            // Game Over Screen Overlay
+            if (gameState === 'GAMEOVER') {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#f65e3b';
+                ctx.font = 'bold 22px -apple-system, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', 160, 110);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px -apple-system, sans-serif';
+                ctx.fillText('生存記録: ' + elapsedTime.toFixed(2) + '秒', 160, 145);
+
+                // 3-tier Evaluation Mark
+                ctx.font = 'bold 64px -apple-system, sans-serif';
+                if (finalGrade === '〇') ctx.fillStyle = '#4cd964';
+                else if (finalGrade === '△') ctx.fillStyle = '#ffcc00';
+                else ctx.fillStyle = '#ff3b30';
+                ctx.fillText(finalGrade, 160, 225);
+
+                // Evaluation Comment
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px -apple-system, sans-serif';
+                ctx.fillText(finalComment, 160, 265);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            if (gameState === 'PLAYING') {
+                animationFrameId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Keyboard mapping (Left / Right / Up for Discard)
+        window.addEventListener('keydown', (e) => {
+            if (isInputDisabled()) return;
+
+            // 矢印キー・スペースでページがスクロールしないように（プレイ中のみ）
+            if ((gameState === 'START' || gameState === 'PLAYING') && [...['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'], ' '].includes(e.key)) e.preventDefault();
+
+            if (gameState === 'START') {
+                resetGame();
+                return;
+            }
+
+            if (gameState === 'PLAYING') {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                    handleAction('LEFT');
+                } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                    handleAction('RIGHT');
+                } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
+                    handleAction('DISCARD');
+                }
+            }
+        });
+
+        // Touch swipe mapping
+        canvas.addEventListener('touchstart', (e) => {
+            if (isInputDisabled()) return;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+                return;
+            }
+
+            if (gameState !== 'PLAYING') return;
+
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+
+            // Swipe logic
+            if (Math.abs(deltaY) > 25 && deltaY < -20 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                // Swipe UP -> Discard
+                handleAction('DISCARD');
+            } else if (Math.abs(deltaX) > 20) {
+                if (deltaX < 0) {
+                    handleAction('LEFT');
+                } else {
+                    handleAction('RIGHT');
+                }
+            } else {
+                // Tap location on canvas
+                const rect = canvas.getBoundingClientRect();
+                const tapX = touch.clientX - rect.left;
+                const tapY = touch.clientY - rect.top;
+
+                if (tapY < 60) {
+                    handleAction('DISCARD');
+                } else if (tapX < rect.width / 2) {
+                    handleAction('LEFT');
+                } else {
+                    handleAction('RIGHT');
+                }
+            }
+        });
+
+        // Mouse click on start screen
+        canvas.addEventListener('mousedown', (e) => {
+            if (isInputDisabled()) return;
+
+            if (gameState === 'START') {
+                resetGame();
+            }
+        });
+
+        // Initial draw
+        draw();
+    </script>
+</body>
+</html>

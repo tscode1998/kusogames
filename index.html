@@ -469,16 +469,53 @@
             .header-visual {
                 width: 100%;
                 max-width: 300px;
-                height: 90px;
-                margin-top: 10px;
+                height: 60%; /*-- 修正--*/
+                margin-top: 6px;/*-- 修正--*/
             }
 
             .header-tags {
                 justify-content: center;
             }
+            .site-header { 
+                padding: 14px 0;
+            }
 
+            .site-description {
+                display: none;
+            }
             .game-grid {
                 grid-template-columns: 1fr;
+                gap: 10px
+            }
+            .game-card {
+                display: grid;
+                grid-template-columns: 56px 1fr auto;
+                grid-template-areas: "icon title btn" "icon desc btn";
+                column-gap: 12px;
+                align-items: center;
+                padding: 10px 12px;
+            }
+            .game-card:hover { transform: none; }
+            .card-header-icon {
+                grid-area: icon;
+                width: 56px; height: 56px;
+                margin: 0; font-size: 28px;
+            }
+            .game-card h3 { grid-area: title; margin: 0; font-size: 15px; }
+            .game-card p {
+                grid-area: desc; margin: 0; font-size: 12px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .game-card .card-footer {
+                grid-area: btn;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
+                border-top: none;
+                padding-top: 0;
             }
 
             .footer-content {

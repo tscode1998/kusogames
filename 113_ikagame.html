@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-31RDY13BYR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-31RDY13BYR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>しゃくれ！イカゲーム | しゃくってフォール、光ったら合わせて釣り上げろ！ | Lazy Arcade</title>
+
+    <!-- ===== 共通部分: ファビコン（index.html と同じ） ===== -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23edc22e'/><circle cx='50' cy='53' r='36' fill='%23f5e6d3'/><ellipse cx='37' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(-10 37 50)'/><ellipse cx='63' cy='50' rx='12' ry='8' fill='%23776e65' transform='rotate(10 63 50)'/><circle cx='38' cy='49' r='3' fill='%23ffffff'/><circle cx='38' cy='49' r='1.5' fill='%23333333'/><circle cx='62' cy='49' r='3' fill='%23ffffff'/><circle cx='62' cy='49' r='1.5' fill='%23333333'/><ellipse cx='50' cy='58' rx='5' ry='3.5' fill='%234a4238'/><path d='M 46 64 Q 50 67 54 64' stroke='%234a4238' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+
+    <!-- SEO & メタデータ（ゲームごとに変更） -->
+    <meta name="description" content="エギをしゃくってイカを釣る45秒のタイミング釣りゲーム。寄ってきたイカが光った瞬間に合わせて釣り上げよう。スマホ・PC対応、無料で登録不要。ベストスコアは自動保存されるので、何度でも記録更新に挑戦できます。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tscode1998.github.io/kusogames/112_egi-shakuri.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+
+    <!-- OGP -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="しゃくれ！イカゲーム | しゃくってフォール、光ったら合わせて釣り上げろ！ | Lazy Arcade">
+    <meta property="og:description" content="しゃくって合わせてイカを釣り上げろ！45秒の無料タイミング釣りゲーム">
+    <meta property="og:url" content="https://tscode1998.github.io/kusogames/112_egi-shakuri.html"> <!-- TODO: ドメイン決定後に実際のURLへ変更してください -->
+    <meta property="og:site_name" content="Lazy Arcade">
+    <meta property="og:locale" content="ja_JP">
+
+    <!-- ===== 共通部分: サイト共通CSS（index.html / contact.html 準拠）。修正するときは 101〜111 の全ゲームページで同じ内容に更新してください ===== -->
+    <style>
+        :root {
+            --bg-color: #faf8ef;
+            --text-main: #4a4238;
+            --text-sub: #776e65;
+            --primary-color: #8f7a66;
+            --accent-orange: #f2b179;
+            --accent-red: #f65e3b;
+            --card-bg: #ffffff;
+            --border-color: #bbada0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.15);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* index.html の margin/padding リセット。ゲーム領域（.game-stage）には適用しない（ゲームの余白を変えないため） */
+        :where(:not(.game-stage):not(.game-stage *)) {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header */
+        .site-header {
+            background: #fbf9f3;
+            border-bottom: 2px solid #edc22e;
+            padding: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .site-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+
+        .site-logo-mark {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #edc22e, #f2b179);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(237, 194, 46, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .site-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #776e65;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.2;
+        }
+
+        .site-title span {
+            background: #edc22e;
+            color: #fff;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            vertical-align: middle;
+            font-weight: bold;
+            letter-spacing: 0;
+        }
+
+        .site-description {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .header-visual {
+            flex-shrink: 0;
+            width: 200px;
+            height: 110px;
+            background: linear-gradient(135deg, #8f7a66, #edc22e);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-visual-icon {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .header-visual-text {
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.25);
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） */
+        .page-nav-bar {
+            margin: 24px 0 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eee4da;
+            color: #776e65;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #8f7a66;
+            color: #ffffff;
+        }
+
+        /* AdSense Slot */
+        .adsense-slot {
+            margin: 35px 0;
+            padding: 15px;
+            background: #f0ece1;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .adsense-label {
+            font-size: 11px;
+            color: #a09586;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .site-footer {
+            background: #eee4da;
+            color: #776e65;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #5c534b;
+        }
+
+        .footer-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-nav li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav a {
+            color: #776e65;
+            text-decoration: underline;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(119, 110, 101, 0.2);
+            font-size: 12px;
+            color: #8f7a66;
+        }
+
+        /* Responsive（index.html の @media (max-width: 768px) を踏襲） */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-logo-link {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .site-title {
+                justify-content: center;
+            }
+
+            .header-visual {
+                width: 100%;
+                max-width: 300px;
+                height: 72px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            /* ゲームページ用: ゲームが画面外に押し出されないよう、ヘッダー・広告の縦幅を詰める */
+            .site-header {
+                padding: 14px 0;
+            }
+
+            .site-description {
+                display: none;
+            }
+
+            .page-nav-bar {
+                margin: 14px 0 0;
+            }
+
+            .adsense-slot {
+                margin: 16px 0;
+            }
+        }
+    </style>
+
+    <!-- ゲーム固有CSS（ゲーム本体のスタイル。セレクタの付け替え以外は元のまま） -->
+    <style>
+        :where(.game-stage), :where(.game-stage) * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        /* ゲーム領域の基本スタイル（.game-stage に限定） */
+        .game-stage {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #776e65;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            touch-action: manipulation;
+            line-height: normal;
+            margin-bottom: 30px;
+        }
+        :where(.game-stage) .container {
+            padding: 0;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .game-stage .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        :where(.game-stage) h1 {
+            font-size: 22px;
+            margin: 0;
+            color: #776e65;
+        }
+        .game-stage .scores {
+            display: flex;
+            gap: 8px;
+        }
+        .game-stage .score-box {
+            background: #bbada0;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 50px;
+        }
+        .game-stage .score-box span {
+            display: block;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        .game-stage canvas {
+            background-color: #1c6fc2;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            touch-action: none;
+        }
+        /* 「合わせ」ボタン（大きめ） */
+        .game-stage .btn-hit {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            height: 56px;
+            margin: 12px auto 0;
+            background: #f65e3b;
+            font-size: 22px;
+            letter-spacing: 4px;
+            border-radius: 28px;
+            touch-action: none;
+            transition: transform 0.08s;
+        }
+        .game-stage .btn-hit:active {
+            background: #e04b28;
+            transform: scale(0.98);
+        }
+        /* 合わせどき：ボタンが金色に光って大きくなる */
+        .game-stage .btn-hit.go {
+            background: #ffb300;
+            color: #4a3b00;
+            transform: scale(1.05);
+            box-shadow: 0 0 0 4px rgba(255, 210, 58, 0.6), 0 0 20px rgba(255, 210, 58, 0.95);
+        }
+        .game-stage .controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .game-stage .info {
+            font-size: 12px;
+            color: #8f7a66;
+            text-align: left;
+        }
+        :where(.game-stage) button {
+            background: #8f7a66;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        :where(.game-stage) button:active {
+            background: #776e65;
+        }
+
+        /* 広告モーダル用CSS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 330px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            font-size: 14px;
+            color: #776e65;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .ad-container {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px auto;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .close-btn {
+            background-color: #f65e3b;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .close-btn:active {
+            background-color: #e04b28;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 共通部分: サイトヘッダー（contact.html と同じ構成。右のビジュアルだけゲームごとに変更）。修正時は全ゲームページを更新 ===== -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="header-left">
+                <a href="index.html" class="site-logo-link">
+                </a>
+            </div>
+
+            <!-- ゲームごとに変更: 現在のゲームのアイコンと名前 -->
+
+        </div>
+    </header>
+    <!-- ===== /共通部分: サイトヘッダー ===== -->
+
+    <main class="container">
+
+        <!-- ===== 共通部分: 「ゲーム一覧へ戻る」ナビ（contact.html と同じ） ===== -->
+        <div class="page-nav-bar">
+            <a href="index.html" class="btn-back">◀ ゲーム一覧（トップページ）へ戻る</a>
+        </div>
+
+        <!-- ===== 共通部分: 広告枠（ゲームエリアの上）。広告コードは index.html と同じく空のまま ===== -->
+
+        <!-- ゲームエリア（以下、ゲーム固有。.game-stage の中だけがゲームの操作領域） -->
+        <div class="game-stage">
+    <div class="container">
+
+        <div class="header">
+            <h1>しゃくれ！イカゲーム</h1>
+            <div class="scores">
+                <div class="score-box">SCORE<span id="score">0</span></div>
+                <div class="score-box">BEST<span id="best">0</span></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="320" height="400"></canvas>
+
+        <button id="btnHit" class="btn-hit">合わせ</button>
+
+        <div class="controls">
+            <div class="info">タップ/クリックでしゃくり<br>光ったら合わせ（Space）</div>
+            <button id="btnRestart" onclick="resetGame()">リセット</button>
+        </div>
+    </div>
+
+    <!-- 広告用モーダル -->
+    <div id="adModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">SPONSORED</div>
+            <div class="ad-container">
+                <!-- 忍者admaxスクリプト -->
+                <script src="https://adm.shinobi.jp/s/41668834bee0323cdbe5394799c385f4"></script>
+            </div>
+            <button class="close-btn" onclick="closeAdModal()">もう一度プレイ</button>
+        </div>
+    </div>
+
+        </div>
+        <!-- /ゲームエリア -->
+
+    </main>
+
+    <!-- ===== 共通部分: サイトフッター（index.html と同じ）。修正時は全ゲームページを更新 ===== -->
+    <!-- ===== /共通部分: サイトフッター ===== -->
+
+    <script>
+    // ====== 基本設定 ======
+    const cv = document.getElementById('gameCanvas');
+    const ctx = cv.getContext('2d');
+    const btnHit = document.getElementById('btnHit');
+    const W = 320, H = 400;
+    const TOTAL = 45;      // 制限時間（秒）
+    const SINK = 38;       // エギの沈下速度(px/秒)
+    const FONT = '"Hiragino Maru Gothic ProN", "Yu Gothic", -apple-system, sans-serif';
+    const BEST_KEY = 'egiShakuriBest';
+
+    // イカの種類（pts:得点 spd:寄る速さ win:光る時間ms pre:光る前の溜めms s:大きさ wid:胴の太さ）
+    const TYPES = {
+        aori: { pts: 100, spd: 70, win: 600, pre: 350, s: 1,    wid: 1,    c: '#f7c6d4', c2: '#e88fa9' },
+        kou:  { pts: 50,  spd: 42, win: 900, pre: 400, s: 1.1,  wid: 1.3,  c: '#e2c19a', c2: '#b98f63' },
+        big:  { pts: 300, spd: 95, win: 400, pre: 300, s: 1.45, wid: 1,    c: '#f4a3bf', c2: '#d9648f' }
+    };
+
+    // ====== 状態 ======
+    let state = 'title'; // title | ready | play | result
+    let score = 0, best = 0, kills = 0, combo = 0, maxCombo = 0, newRecord = false;
+    let readyAt = 0, startAt = 0, nextSpawn = 0, timeLeft = TOTAL;
+    let ents = [], parts = [], bubbles = [];
+    let egi = { x: 160, y: 70, vy: SINK, phase: 'fall' };
+    let shaku = [];       // しゃくり時刻の履歴
+    let wary = false;     // イカが警戒中か
+    let lure = 0;         // しゃくりで誘われて、これから寄ってくるイカの数
+    let lastShaku = 0;    // 最後にしゃくった時刻
+    let prog = 0, asa = false;
+    let redFlash = 0;
+
+    try { best = parseInt(localStorage.getItem(BEST_KEY)) || 0; } catch (e) {}
+    document.getElementById('best').textContent = best;
+
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    function isModalOpen() {
+        return document.getElementById('adModal').style.display === 'flex';
+    }
+
+    // ====== 音（Web Audio API） ======
+    let ac = null, bgm = null;
+    function initAudio() {
+        try {
+            if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+            if (ac.state === 'suspended') ac.resume();
+        } catch (e) {}
+    }
+    function tone(f, d, type, vol, to, delay) {
+        if (!ac) return;
+        try {
+            const t = ac.currentTime + (delay || 0);
+            const o = ac.createOscillator(), g = ac.createGain();
+            o.type = type || 'sine';
+            o.frequency.setValueAtTime(f, t);
+            if (to) o.frequency.exponentialRampToValueAtTime(to, t + d);
+            g.gain.setValueAtTime(vol || 0.15, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + d);
+            o.connect(g); g.connect(ac.destination);
+            o.start(t); o.stop(t + d + 0.02);
+        } catch (e) {}
+    }
+    function sfx(kind, n) {
+        if (kind === 'shaku') {            // シュッ
+            tone(1300, 0.14, 'sawtooth', 0.05, 300);
+        } else if (kind === 'pico') {      // ピコッ
+            tone(1320, 0.09, 'square', 0.06);
+            tone(1760, 0.09, 'square', 0.05, 0, 0.07);
+        } else if (kind === 'go') {        // 合わせどきの合図（キラッ）
+            tone(1568, 0.1, 'triangle', 0.14);
+            tone(2093, 0.18, 'triangle', 0.14, 0, 0.06);
+        } else if (kind === 'get') {       // ピロリン（連続で高音）
+            const b = 523.25 * Math.pow(2, Math.min(n, 9) * 2 / 12);
+            tone(b, 0.15, 'sine', 0.16);
+            tone(b * 1.25, 0.15, 'sine', 0.16, 0, 0.07);
+            tone(b * 1.5, 0.3, 'sine', 0.16, 0, 0.14);
+        } else if (kind === 'fail') {      // ポヨン
+            tone(220, 0.3, 'sine', 0.2, 90);
+        } else if (kind === 'tick') {
+            tone(880, 0.08, 'sine', 0.08);
+        }
+    }
+
+    // ====== BGM: 海のポップな感じ（C → Am → F → G の4小節ループ） ======
+    const BGM_BPM = 116;
+    const BGM_STEP = 60 / BGM_BPM / 2;                 // 8分音符1つの長さ（秒）
+    const BGM_ROOTS = [130.81, 110.00, 87.31, 98.00];  // ベース音（C, A, F, G）
+    const BGM_CHORDS = [[0, 4, 7], [-3, 0, 4], [-7, -3, 0], [-5, -1, 2]]; // C4からの半音
+    const BGM_MELODY = [                               // 1小節8ステップ × 4小節（ペンタトニック）
+        [7, null, 12, 9, 7, null, 4, 7],
+        [9, null, 12, 9, 7, null, 9, null],
+        [9, null, 7, 4, 7, null, 9, 12],
+        [7, null, 9, 7, 4, null, 2, null]
+    ];
+    function bgmNote(f, d, type, vol, t) {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        o.connect(g); g.connect(bgm.master);
+        o.start(t); o.stop(t + d + 0.02);
+    }
+    function bgmHat(t) {
+        const s = ac.createBufferSource();
+        s.buffer = bgm.noise;
+        const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 7000;
+        const g = ac.createGain();
+        g.gain.setValueAtTime(0.05, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+        s.connect(hp); hp.connect(g); g.connect(bgm.master);
+        s.start(t); s.stop(t + 0.05);
+    }
+    function bgmPlayStep(step, t) {
+        const bar = Math.floor(step / 8), i = step % 8;
+        // ベース（ぽんぽん跳ねる）
+        if (i === 0 || i === 3 || i === 4 || i === 7) {
+            const f = BGM_ROOTS[bar] * (i === 7 ? 2 : 1);
+            bgmNote(f, 0.2, 'triangle', 0.16, t);
+        }
+        // コード（裏拍でぽろん）
+        if (i === 2 || i === 6) {
+            BGM_CHORDS[bar].forEach(n => bgmNote(261.63 * Math.pow(2, n / 12), 0.22, 'sine', 0.05, t));
+        }
+        // メロディ（マリンバ風）
+        const m = BGM_MELODY[bar][i];
+        if (m !== null) {
+            const f = 261.63 * Math.pow(2, m / 12);
+            bgmNote(f, 0.28, 'triangle', 0.09, t);
+            bgmNote(f * 2, 0.12, 'sine', 0.025, t);
+        }
+        // ハイハット（8分裏）
+        if (i % 2 === 1) bgmHat(t);
+    }
+    function bgmSchedule() {
+        if (!ac || !bgm) return;
+        try {
+            while (bgm.next < ac.currentTime + 0.3) {
+                bgmPlayStep(bgm.step, bgm.next);
+                bgm.next += BGM_STEP;
+                bgm.step = (bgm.step + 1) % 32;
+            }
+        } catch (e) {}
+    }
+    function startBgm() {
+        if (!ac || bgm) return;
+        try {
+            const master = ac.createGain();
+            master.gain.value = 0.5;
+            master.connect(ac.destination);
+            // ハイハット用の短いノイズ
+            const len = Math.floor(ac.sampleRate * 0.1);
+            const noise = ac.createBuffer(1, len, ac.sampleRate);
+            const d = noise.getChannelData(0);
+            for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+            bgm = { master, noise, step: 0, next: ac.currentTime + 0.1, timer: null };
+            bgm.timer = setInterval(bgmSchedule, 100);
+            bgmSchedule();
+        } catch (e) { bgm = null; }
+    }
+    function stopBgm() {
+        if (!bgm) return;
+        const b = bgm;
+        bgm = null;
+        try {
+            clearInterval(b.timer);
+            b.master.gain.setTargetAtTime(0, ac.currentTime, 0.05);
+            setTimeout(() => { try { b.master.disconnect(); } catch (e) {} }, 400);
+        } catch (e) {}
+    }
+
+    // ====== 進行処理 ======
+    function beginReady() {
+        score = 0; kills = 0; combo = 0; maxCombo = 0; newRecord = false;
+        ents = []; parts = []; shaku = []; wary = false; lure = 0; timeLeft = TOTAL; prog = 0; asa = false;
+        egi = { x: 160, y: 70, vy: SINK, phase: 'fall' };
+        document.getElementById('score').textContent = 0;
+        state = 'ready';
+        readyAt = performance.now();
+    }
+    function resetGame() {
+        stopBgm();
+        initAudio();
+        beginReady();
+        try { if (document.activeElement) document.activeElement.blur(); } catch (e) {}
+    }
+
+    function endGame() {
+        state = 'result';
+        stopBgm();
+        ents = [];
+        if (score > best) {
+            best = score; newRecord = true;
+            try { localStorage.setItem(BEST_KEY, best); } catch (e) {}
+            document.getElementById('best').textContent = best;
+        }
+        handleGameOver();
+    }
+    function handleGameOver() {
+        setTimeout(() => {
+            if (state === 'result') document.getElementById('adModal').style.display = 'flex';
+        }, 1000);
+    }
+    function closeAdModal() {
+        document.getElementById('adModal').style.display = 'none';
+        resetGame();
+    }
+
+    // ====== ゲームロジック ======
+    function spawnDelay() { return 2.2 - 1.2 * prog; } // 寄るまでの間（秒）。時間が進むほど短い
+
+    function addText(txt, x, y, color, size) {
+        parts.push({ txt, x, y, vx: 0, vy: -35, g: 0, life: 0.8, max: 0.8, color: color || '#fff', size: size || 18 });
+    }
+    function splash(x, y, n) {
+        for (let i = 0; i < n; i++) {
+            const a = Math.random() * Math.PI, sp = 60 + Math.random() * 120;
+            parts.push({ x, y, vx: Math.cos(a) * sp * (Math.random() < 0.5 ? -1 : 1) * 0.6, vy: -Math.sin(a) * sp, g: 400, life: 0.6, max: 0.6, r: 2 + Math.random() * 3 });
+        }
+    }
+
+    function spawnSquid() {
+        const pBig = Math.min(0.6, 0.08 + 0.17 * prog + (asa ? 0.2 : 0));
+        const r = Math.random();
+        const t = r < pBig ? 'big' : (r < pBig + 0.25 ? 'kou' : 'aori');
+        const side = Math.random() < 0.5 ? -1 : 1;
+        ents.push({
+            type: t, T: TYPES[t], state: 'approach',
+            x: side < 0 ? -30 : W + 30,
+            y: clamp(egi.y + (Math.random() * 80 - 40), 50, 355),
+            dir: -side, hover: 0, age: 0, touchAt: 0, win: 0, glowed: false, fleeDir: 1, caughtAt: 0, dead: false
+        });
+    }
+
+    function flee(e) {
+        e.state = 'flee';
+        e.fleeDir = Math.sign(e.x - egi.x) || 1;
+        e.dir = e.fleeDir;
+    }
+    function failHit(e, msg) {
+        combo = 0;
+        flee(e);
+        sfx('fail');
+        addText(msg, e.x, e.y - 30, '#fff');
+        redFlash = 0.25;
+    }
+    function catchSquid(e, now) {
+        const mult = Math.min(3, 1 + 0.5 * combo);
+        const pts = Math.round(e.T.pts * mult * (asa ? 1.5 : 1));
+        score += pts; kills++;
+        sfx('get', combo);
+        combo++; if (combo > maxCombo) maxCombo = combo;
+        e.state = 'caught'; e.caughtAt = now;
+        splash(e.x, e.y, 16);
+        addText('+' + pts, e.x, e.y - 50, '#ffe066', 20);
+        document.getElementById('score').textContent = score;
+    }
+
+    // しゃくり（キャンバスのタップ／クリック）
+    function shakuri(x, y, now) {
+        if (state !== 'play' || isModalOpen()) return;
+        const t = ents.find(e => e.state === 'touch');
+        if (t) failHit(t, '逃げられた');
+        egi.x = clamp(x, 16, W - 16);
+        egi.y = clamp(y, 18, 370);
+        egi.vy = -380; egi.phase = 'jump';
+        lure = 0;
+        lastShaku = now;
+        shaku.push(now);
+        sfx('shaku');
+        splash(egi.x, egi.y, 3);
+    }
+
+    // 合わせ
+    function doHit() {
+        if (state !== 'play' || isModalOpen()) return;
+        const now = performance.now();
+        const t = ents.find(e => e.state === 'touch');
+        if (t) {
+            const el = now - t.touchAt;
+            if (el < t.T.pre) failHit(t, '早い！');
+            else if (el <= t.T.pre + t.win) catchSquid(t, now);
+            else failHit(t, '遅い！');
+            return;
+        }
+        const a = ents.find(e => e.state === 'approach' && Math.hypot(egi.x - e.x, egi.y - e.y) < 80);
+        if (a) failHit(a, '早い！');
+        else tone(300, 0.06, 'sine', 0.05); // 空振り（ペナルティなし）
+    }
+
+    function update(now, dt) {
+        // 泡
+        if (Math.random() < dt * 4) bubbles.push({ x: Math.random() * W, y: H + 5, r: 2 + Math.random() * 4, v: 20 + Math.random() * 30 });
+        bubbles.forEach(b => { b.y -= b.v * dt; b.x += Math.sin(b.y * 0.05) * 0.3; });
+        bubbles = bubbles.filter(b => b.y > -10);
+        // パーティクル
+        parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.life -= dt; });
+        parts = parts.filter(p => p.life > 0);
+        if (redFlash > 0) redFlash -= dt;
+        if (state !== 'play') { btnHit.classList.remove('go'); return; }
+
+        const el = (now - startAt) / 1000;
+        timeLeft = Math.max(0, TOTAL - el);
+        prog = Math.min(1, el / TOTAL);
+        asa = timeLeft <= 15;
+
+        // エギの動き
+        if (egi.phase === 'jump') {
+            egi.vy += 700 * dt; egi.y += egi.vy * dt;
+            if (egi.y < 18) { egi.y = 18; egi.vy = Math.max(egi.vy, 0); }
+            if (egi.vy >= SINK) {
+                egi.vy = SINK; egi.phase = 'fall';
+                // しゃくった後のフォール開始：ここでだけイカが誘われる（1〜2杯）
+                if (!wary) {
+                    lure = Math.random() < 0.25 + 0.35 * prog ? 2 : 1;
+                    nextSpawn = now + spawnDelay() * 1000 * (0.5 + Math.random() * 0.5);
+                }
+            }
+        } else {
+            egi.y = Math.min(372, egi.y + SINK * dt);
+        }
+
+        // しゃくり連打で警戒
+        shaku = shaku.filter(t => now - t < 2000);
+        wary = shaku.length >= 3;
+        if (wary) lure = 0;
+
+        // イカの出現（しゃくりで誘われた分だけ、フォール中に寄ってくる。放置では増えない）
+        const maxSq = prog > 0.5 ? 3 : 2;
+        const active = ents.filter(e => e.state === 'approach' || e.state === 'touch').length;
+        if (egi.phase === 'fall' && !wary && lure > 0 && now >= nextSpawn && active < maxSq) {
+            spawnSquid();
+            lure--;
+            nextSpawn = now + 700 + Math.random() * 500;
+        }
+
+        // イカの動き
+        ents.forEach(e => {
+            if (e.state === 'approach') {
+                if (wary) { flee(e); return; }
+                e.age += dt;
+                if (e.age > 7) { flee(e); return; }
+                const dx = egi.x - e.x, dy = egi.y - e.y, d = Math.hypot(dx, dy) || 1;
+                e.dir = Math.sign(dx) || 1;
+                if (egi.phase === 'fall') {
+                    if (d < 20 * e.T.s && !ents.some(o => o.state === 'touch')) {
+                        e.state = 'touch'; e.touchAt = now; e.glowed = false;
+                        e.win = e.T.win * (1 - 0.4 * prog); // 時間が進むほど猶予が短い
+                        sfx('pico');
+                    } else if (d >= 20 * e.T.s) {
+                        e.x += dx / d * e.T.spd * dt; e.y += dy / d * e.T.spd * dt;
+                    }
+                } else {
+                    e.hover += dt;
+                    e.y += Math.sin(now / 200) * 10 * dt;
+                    if (e.hover > 3) flee(e);
+                }
+            } else if (e.state === 'touch') {
+                e.x = egi.x - e.dir * 18 * e.T.s; e.y = egi.y;
+                // 光り始めの合図音
+                if (!e.glowed && now - e.touchAt >= e.T.pre) { e.glowed = true; sfx('go'); }
+                if (now - e.touchAt > e.T.pre + e.win) failHit(e, '逃げられた');
+            } else if (e.state === 'flee') {
+                e.x += e.fleeDir * 170 * dt;
+                if (e.x < -50 || e.x > W + 50) e.dead = true;
+            } else if (e.state === 'caught') {
+                e.y -= 140 * dt;
+                if (now - e.caughtAt > 500) e.dead = true;
+            }
+        });
+        ents = ents.filter(e => !e.dead);
+
+        // 合わせどきは「合わせ」ボタンも光らせる
+        const glowing = ents.some(e => e.state === 'touch' && now - e.touchAt >= e.T.pre);
+        btnHit.classList.toggle('go', glowing);
+
+        if (timeLeft <= 0) endGame();
+    }
+
+    // ====== 描画 ======
+    // イカ：矢じり型の胴＋三角のひれ、胴の下に頭と大きな2つの目、8本の足と2本の長い触腕
+    function drawSquid(e, now) {
+        const T = e.T, s = T.s * 0.75;
+        ctx.save();
+        ctx.translate(e.x, e.y);
+        // 足先を進行方向へ向けて少し傾ける（逃げるときは逆向き＝胴から泳ぐ）
+        let tilt = -e.dir * 0.55;
+        if (e.state === 'flee') tilt = e.dir * 0.55;
+        if (e.state === 'caught' || e.state === 'idle') tilt = e.state === 'idle' ? -e.dir * 0.3 : 0;
+        ctx.rotate(tilt);
+        ctx.scale(s * T.wid, s);
+        const wig = Math.sin(now / 130 + e.x * 0.05);
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+        // 足（8本）
+        ctx.strokeStyle = T.c2; ctx.lineWidth = 3.4;
+        for (let i = 0; i < 8; i++) {
+            const k = i - 3.5, sw = (i % 2 ? 1 : -1) * wig;
+            ctx.beginPath(); ctx.moveTo(k * 3, 12);
+            ctx.quadraticCurveTo(k * 4.5 + sw * 3, 20, k * 5.5 - sw * 3, 28);
+            ctx.stroke();
+        }
+        // 触腕（2本の長い足と先のへら）
+        ctx.lineWidth = 2.6; ctx.fillStyle = T.c2;
+        [-1, 1].forEach(sd => {
+            ctx.beginPath(); ctx.moveTo(sd * 4, 12);
+            ctx.quadraticCurveTo(sd * 10 + wig * 5 * sd, 28, sd * 6 + wig * 6, 42);
+            ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(sd * 6 + wig * 6, 43, 3.4, 4.6, 0, 0, Math.PI * 2); ctx.fill();
+        });
+
+        // ひれ（胴の先端にある矢じり型の三角ひれ）
+        ctx.fillStyle = T.c2;
+        ctx.beginPath();
+        ctx.moveTo(0, -39); ctx.lineTo(-21, -17);
+        ctx.quadraticCurveTo(-13, -12, 0, -15);
+        ctx.quadraticCurveTo(13, -12, 21, -17);
+        ctx.closePath(); ctx.fill();
+        // 胴（先のとがった円すい形）
+        ctx.fillStyle = T.c;
+        ctx.beginPath();
+        ctx.moveTo(0, -40);
+        ctx.quadraticCurveTo(15, -22, 11.5, 3);
+        ctx.lineTo(-11.5, 3);
+        ctx.quadraticCurveTo(-15, -22, 0, -40);
+        ctx.closePath(); ctx.fill();
+        // 胴の中心線と斑点
+        ctx.strokeStyle = T.c2; ctx.lineWidth = 1.4; ctx.globalAlpha = 0.6;
+        ctx.beginPath(); ctx.moveTo(0, -34); ctx.lineTo(0, -2); ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = T.c2;
+        [[-5, -24], [5, -18], [-5, -12], [5, -6], [-4, -2]].forEach(p => {
+            ctx.beginPath(); ctx.arc(p[0], p[1], 1.5, 0, 7); ctx.fill();
+        });
+        // 頭
+        ctx.fillStyle = T.c;
+        ctx.beginPath(); ctx.ellipse(0, 7, 14, 9.5, 0, 0, Math.PI * 2); ctx.fill();
+        // 目（2つ）
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(-7.5, 6, 5.4, 0, 7); ctx.arc(7.5, 6, 5.4, 0, 7); ctx.fill();
+        ctx.fillStyle = '#2b2b33';
+        ctx.beginPath(); ctx.arc(-7.5, 7, 3.1, 0, 7); ctx.arc(7.5, 7, 3.1, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(-6.4, 5.8, 1.2, 0, 7); ctx.arc(8.6, 5.8, 1.2, 0, 7); ctx.fill();
+        ctx.restore();
+
+        if (e.state === 'touch') {
+            const el = now - e.touchAt, pre = e.T.pre, total = pre + e.win;
+            const glow = el >= pre;
+            const cx = e.x, cy = Math.max(46, e.y - 32 * T.s - 28);
+            ctx.save();
+            if (!glow) {
+                // 溜め：白い輪が縮んでいく（まだ合わせない）
+                const r = 38 - 20 * clamp(el / pre, 0, 1);
+                ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+                ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+                ctx.beginPath(); ctx.arc(cx, cy, 18, 0, Math.PI * 2); ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 20px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('！', cx, cy + 1);
+            } else {
+                // 合わせどき：金色に塗りつぶして点滅、残り時間は外周のゲージ
+                const left = 1 - clamp((el - pre) / (total - pre), 0, 1);
+                const pulse = 0.5 + 0.5 * Math.sin(now / 50);
+                ctx.shadowColor = '#ffd23a'; ctx.shadowBlur = 18;
+                ctx.fillStyle = pulse > 0.5 ? '#ffd23a' : '#fff3a8';
+                ctx.beginPath(); ctx.arc(cx, cy, 20, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.lineWidth = 5; ctx.strokeStyle = '#f65e3b';
+                ctx.beginPath(); ctx.arc(cx, cy, 26, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * left); ctx.stroke();
+                ctx.fillStyle = '#f65e3b';
+                ctx.font = 'bold 26px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('！', cx, cy + 1);
+            }
+            ctx.restore();
+        }
+        if (e.state === 'caught') {
+            ctx.save();
+            ctx.font = 'bold 22px ' + FONT; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+            ctx.strokeStyle = '#f65e3b'; ctx.lineWidth = 4;
+            ctx.strokeText('GET!', e.x, e.y - 36 * T.s); ctx.fillText('GET!', e.x, e.y - 36 * T.s);
+            ctx.restore();
+        }
+    }
+
+    function drawEgi() {
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(egi.x, 0); ctx.lineTo(egi.x, egi.y - 12); ctx.stroke();
+        ctx.save(); ctx.translate(egi.x, egi.y);
+        ctx.strokeStyle = '#ffd23a'; ctx.lineWidth = 2; ctx.lineCap = 'round'; // 尾の針
+        for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(i * 3, 11); ctx.lineTo(i * 4, 17); ctx.stroke(); }
+        ctx.fillStyle = '#ff5d8f';
+        ctx.beginPath(); ctx.ellipse(0, 0, 7, 12, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffd23a'; ctx.fillRect(-7, -1, 14, 4);
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, -6, 3.2, 0, 7); ctx.fill();
+        ctx.fillStyle = '#333'; ctx.beginPath(); ctx.arc(0, -6, 1.5, 0, 7); ctx.fill();
+        ctx.restore();
+    }
+
+    function drawText(txt, x, y, size, color, stroke) {
+        ctx.font = 'bold ' + size + 'px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        if (stroke) { ctx.lineWidth = 4; ctx.strokeStyle = stroke; ctx.strokeText(txt, x, y); }
+        ctx.fillStyle = color; ctx.fillText(txt, x, y);
+    }
+
+    function draw(now) {
+        // 海のグラデーション（朝マズメは夕焼け色）
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        const cols = (state === 'play' && asa) ? ['#ffc58a', '#e0788f', '#4a3b8c'] : ['#69cdf0', '#1c6fc2', '#0b3a85'];
+        g.addColorStop(0, cols[0]); g.addColorStop(0.55, cols[1]); g.addColorStop(1, cols[2]);
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#d9c08a'; ctx.fillRect(0, 388, W, 12);
+        // 泡
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5;
+        bubbles.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.stroke(); });
+
+        if (state === 'title') {
+            const by = 215 + Math.sin(now / 400) * 6;
+            drawSquid({ x: 220, y: by, dir: -1, T: TYPES.aori, state: 'idle' }, now);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(100, 0, 1, 150 + Math.sin(now / 500) * 8);
+            drawText('しゃくれ！', 160, 90, 36, '#fff', '#1c6fc2');
+            drawText('イカゲーム', 160, 135, 30, '#fff', '#1c6fc2');
+            if (Math.floor(now / 500) % 2) drawText('タップでスタート', 160, 340, 20, '#fff', '#0b3a85');
+        } else {
+            drawEgi();
+            ents.forEach(e => drawSquid(e, now));
+        }
+        // パーティクル
+        parts.forEach(p => {
+            ctx.globalAlpha = clamp(p.life / p.max, 0, 1);
+            if (p.txt) drawText(p.txt, p.x, p.y, p.size, p.color, 'rgba(0,0,0,0.35)');
+            else { ctx.fillStyle = '#e8f8ff'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+            ctx.globalAlpha = 1;
+        });
+        if (redFlash > 0) { ctx.fillStyle = 'rgba(255,60,60,' + (redFlash * 0.8) + ')'; ctx.fillRect(0, 0, W, H); }
+
+        if (state === 'play') {
+            // 合わせどき：画面の縁を金色に点滅＋大きな「今！」
+            const glowing = ents.some(e => e.state === 'touch' && now - e.touchAt >= e.T.pre);
+            if (glowing) {
+                const pulse = 0.5 + 0.5 * Math.sin(now / 50);
+                ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(255,210,58,' + (0.5 + 0.4 * pulse) + ')';
+                ctx.strokeRect(0, 0, W, H);
+                drawText('今！', 160, 112, 46, '#fff', '#f65e3b');
+            }
+            // HUD
+            ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(10, 8, 300, 8);
+            ctx.fillStyle = asa ? '#ffd23a' : '#fff'; ctx.fillRect(10, 8, 300 * timeLeft / TOTAL, 8);
+            ctx.textAlign = 'left'; ctx.font = 'bold 14px ' + FONT; ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle';
+            ctx.fillText('残り ' + Math.ceil(timeLeft), 10, 30);
+            ctx.textAlign = 'right';
+            ctx.fillText('次 ×' + Math.min(3, 1 + 0.5 * combo).toFixed(1) + (combo > 0 ? '  連続' + combo : ''), 310, 30);
+            if (asa) drawText('朝マズメ！ 得点×1.5', 160, 52, 14, '#fff', '#c0507a');
+            if (wary) drawText('警戒中… しゃくりすぎ注意', 160, 72, 13, '#fff', 'rgba(0,0,0,0.5)');
+            else if (!glowing && ents.length === 0 && lure === 0 && now - lastShaku > 3000 && Math.floor(now / 500) % 2) {
+                drawText('タップでしゃくってイカを誘おう！', 160, 80, 14, '#fff', '#0b3a85');
+            }
+        } else if (state === 'ready') {
+            ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0, 0, W, H);
+            const n = 3 - Math.floor((now - readyAt) / 800);
+            drawText('準備！', 160, 110, 24, '#fff', '#0b3a85');
+            drawText(String(clamp(n, 1, 3)), 160, 200, 80, '#ffe066', '#0b3a85');
+            drawText('しゃくってイカを誘い、', 160, 285, 14, '#fff', '#0b3a85');
+            drawText('「今！」で合わせ！', 160, 308, 14, '#fff', '#0b3a85');
+        } else if (state === 'result') {
+            ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0, 0, W, H);
+            drawText('TIME UP!', 160, 70, 34, '#fff', '#1c6fc2');
+            drawText('釣果 ' + kills + '杯', 160, 130, 26, '#fff');
+            drawText('最大連続 ' + maxCombo, 160, 170, 22, '#fff');
+            drawText('SCORE ' + score, 160, 215, 28, '#ffe066');
+            if (newRecord && Math.floor(now / 300) % 2) drawText('NEW RECORD!', 160, 260, 26, '#ff7a59', '#fff');
+            ctx.fillStyle = '#f65e3b';
+            ctx.beginPath(); ctx.roundRect ? ctx.roundRect(90, 300, 140, 46, 23) : ctx.rect(90, 300, 140, 46); ctx.fill();
+            drawText('もう1回', 160, 324, 20, '#fff');
+        }
+    }
+
+    // ====== メインループ ======
+    let last = performance.now();
+    function loop(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (state === 'ready' && now - readyAt >= 2400) {
+            state = 'play'; startAt = now; nextSpawn = 0; lure = 0; lastShaku = now;
+            startBgm();
+        }
+        update(now, dt);
+        draw(now);
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // ====== 入力 ======
+    cv.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        if (isModalOpen()) return; // モーダル表示中は入力しない
+        const r = cv.getBoundingClientRect();
+        const x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
+        if (state === 'title') { initAudio(); beginReady(); }
+        else if (state === 'play') { initAudio(); shakuri(x, y, performance.now()); }
+        else if (state === 'result' && x > 90 && x < 230 && y > 300 && y < 346) { resetGame(); }
+    });
+    btnHit.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        initAudio();
+        doHit();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.code !== 'Space') return;
+        e.preventDefault();
+        if (e.repeat || isModalOpen()) return;
+        if (state === 'title') { initAudio(); beginReady(); }
+        else if (state === 'play') doHit();
+    });
+    document.addEventListener('keyup', e => { if (e.code === 'Space') e.preventDefault(); });
+    </script>
+</body>
+</html>

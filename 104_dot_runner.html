@@ -493,12 +493,38 @@
         <div class="container header-container">
             <div class="header-left">
                 <a href="index.html" class="site-logo-link">
-                
+                    <div class="site-logo-mark" aria-label="Lazy Arcade ロゴマーク">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+                            <circle cx="50" cy="50" r="48" fill="#edc22e"/>
+                            <circle cx="50" cy="53" r="36" fill="#f5e6d3"/>
+                            <ellipse cx="37" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(-10 37 50)"/>
+                            <ellipse cx="63" cy="50" rx="12" ry="8" fill="#776e65" transform="rotate(10 63 50)"/>
+                            <circle cx="38" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="38" cy="49" r="1.5" fill="#333333"/>
+                            <circle cx="62" cy="49" r="3" fill="#ffffff"/>
+                            <circle cx="62" cy="49" r="1.5" fill="#333333"/>
+                            <ellipse cx="50" cy="58" rx="5" ry="3.5" fill="#4a4238"/>
+                            <path d="M 46 64 Q 50 67 54 64" stroke="#4a4238" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="header-content">
+                        <h1 class="site-title">
+                            Lazy Arcade
+                            <span>完全無料</span>
+                        </h1>
+                        <p class="site-description">
+                            暇つぶしに最適！ゆる〜く遊べる無料ミニゲーム集
+                        </p>
+                    </div>
                 </a>
             </div>
 
             <!-- ゲームごとに変更: 現在のゲームのアイコンと名前 -->
-
+            <div class="header-visual" aria-label="プレイ中のゲーム: DOT RUNNER">
+                <div class="header-visual-icon" aria-hidden="true">🏃</div>
+                <div class="header-visual-text">DOT RUNNER</div>
+            </div>
         </div>
     </header>
     <!-- ===== /共通部分: サイトヘッダー ===== -->
@@ -511,7 +537,13 @@
         </div>
 
         <!-- ===== 共通部分: 広告枠（ゲームエリアの上）。広告コードは index.html と同じく空のまま ===== -->
-
+        <div class="adsense-slot">
+            <div class="adsense-label">スポンサーリンク</div>
+            <!-- Google AdSense ディスプレイ広告コードなどをここに配置 -->
+            <!-- admax -->
+            <script src="https://adm.shinobi.jp/o/1c72557916043bbe6121205054b1ece0"></script>
+            <!-- admax -->
+        </div>
 
         <!-- ゲームエリア（以下、ゲーム固有。.game-stage の中だけがゲームの操作領域） -->
         <div class="game-stage">
@@ -553,6 +585,30 @@
     </main>
 
     <!-- ===== 共通部分: サイトフッター（index.html と同じ）。修正時は全ゲームページを更新 ===== -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h4>Lazy Arcade</h4>
+                <p>
+                    動作環境：HTML5 / JavaScript (Pure Vanilla)<br>
+                    ハイスコアなどのプレイデータはブラウザ（localStorage）に自動保存されます。アカウント不要で気軽にお楽しみいただけます。
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>サイト情報・規定</h4>
+                <ul>
+                    <li><a href="about.html">このサイトについて（利用規約）</a></li>
+                    <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                    <li><a href="contact.html">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Lazy Arcade All Rights Reserved.
+        </div>
+    </footer>
     <!-- ===== /共通部分: サイトフッター ===== -->
 
     <script>
@@ -562,9 +618,16 @@
         const bestDisplay = document.getElementById('best');
         const adModal = document.getElementById('adModal');
 
+        // ゲーム内の論理サイズ（描画解像度とは独立）
+        const W = 320;
+        const H = 400;
+        // ロジックは常に60Hz固定（端末のリフレッシュレートに依存しない）
+        const STEP_MS = 1000 / 60;
+
         let player = {
             x: 50,
             y: 200,
+            prevY: 200,
             size: 12,
             gravity: 0.35,
             velocity: 0,
@@ -578,36 +641,323 @@
         let isGameOver = false;
         let isStarted = false;
 
+        // ランク判定（抜けた本数）: C=0〜 / B / A / S
+        const TH = [[5, 'B'], [10, 'A'], [20, 'S']];
+        const RANK_COL = { C: '#8f7a66', B: '#f2b179', A: '#f65e3b', S: '#edc22e' };
+        function rankOf(sc) {
+            let r = 'C';
+            for (const t of TH) if (sc >= t[0]) r = t[1];
+            return r;
+        }
+        let roundStartBest = Number(best) || 0;
+        let gameOverTimer = null;
+
+        let rafId = null;
+        let lastTime = 0;
+        let acc = 0;
+        let sx = 1;
+        let sy = 1;
+
         bestDisplay.textContent = best;
 
-        function drawPlayer() {
+        /* ===== 高解像度対応（devicePixelRatio に合わせて canvas の実解像度を設定） ===== */
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 3);
+            const cw = Math.max(1, Math.round(rect.width * dpr));
+            const ch = Math.max(1, Math.round(rect.height * dpr));
+            if (canvas.width !== cw || canvas.height !== ch) {
+                canvas.width = cw;
+                canvas.height = ch;
+            }
+            sx = canvas.width / W;
+            sy = canvas.height / H;
+        }
+
+        // 物理ピクセルに揃えて、にじみを防ぐ
+        function snapX(x) { return Math.round(x * sx) / sx; }
+        function snapY(y) { return Math.round(y * sy) / sy; }
+
+        /* ===== BGM（Web Audio APIで合成したポップなループ曲。外部ファイル不要） ===== */
+        const Music = (() => {
+            const BPM = 150;
+            const STEP_SEC = 60 / BPM / 4;   // 16分音符
+            const LOOP_STEPS = 128;          // 8小節
+
+            const BASS_ROOTS = [48, 55, 57, 53];                       // C G Am F
+            const ARP_CHORDS = [[60, 64, 67, 72], [62, 67, 71, 74], [60, 64, 69, 72], [60, 65, 69, 72]];
+            const ARP_PATTERN = [0, 1, 2, 3, 2, 1, 2, 3, 0, 1, 2, 3, 2, 1, 3, 2];
+
+            // [step, midiNote, lengthInSteps]
+            const MELODY = [
+                [[0,76,3],[3,79,3],[6,76,2],[8,72,4],[12,74,2],[14,76,2]],
+                [[0,74,3],[3,71,3],[6,74,2],[8,79,4],[12,77,2],[14,74,2]],
+                [[0,72,3],[3,76,3],[6,81,2],[8,79,3],[11,76,3],[14,72,2]],
+                [[0,77,3],[3,81,3],[6,77,2],[8,76,2],[10,74,2],[12,72,4]],
+                [[0,79,2],[2,79,2],[4,76,2],[6,79,2],[8,84,4],[12,79,2],[14,76,2]],
+                [[0,74,2],[2,74,2],[4,71,2],[6,74,2],[8,79,4],[12,74,4]],
+                [[0,81,2],[2,81,2],[4,79,2],[6,76,2],[8,81,4],[12,84,2],[14,81,2]],
+                [[0,77,2],[2,79,2],[4,81,2],[6,79,2],[8,77,4],[12,76,2],[14,74,2]]
+            ];
+            const MELODY_MAP = {};
+            MELODY.forEach((bar, b) => bar.forEach(([st, n, len]) => { MELODY_MAP[b * 16 + st] = [n, len]; }));
+
+            let ac = null;
+            let comp = null;
+            let out = null;
+            let noiseBuf = null;
+            let timer = null;
+            let nextTime = 0;
+            let step = 0;
+            let playing = false;
+
+            const mtof = (n) => 440 * Math.pow(2, (n - 69) / 12);
+
+            function init() {
+                if (ac) return true;
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return false;
+                ac = new AC();
+                comp = ac.createDynamicsCompressor();
+                comp.connect(ac.destination);
+                noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+                const d = noiseBuf.getChannelData(0);
+                for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+                return true;
+            }
+
+            function voice(type, freq, t, dur, vol, cutoff, sus, detune) {
+                const o = ac.createOscillator();
+                const g = ac.createGain();
+                o.type = type;
+                o.frequency.setValueAtTime(freq, t);
+                if (detune) o.detune.value = detune;
+                g.gain.setValueAtTime(0.0001, t);
+                g.gain.linearRampToValueAtTime(vol, t + 0.008);
+                g.gain.linearRampToValueAtTime(vol * sus, t + dur * 0.8);
+                g.gain.linearRampToValueAtTime(0.0001, t + dur);
+                if (cutoff) {
+                    const f = ac.createBiquadFilter();
+                    f.type = 'lowpass';
+                    f.frequency.value = cutoff;
+                    o.connect(f);
+                    f.connect(g);
+                } else {
+                    o.connect(g);
+                }
+                g.connect(out);
+                o.start(t);
+                o.stop(t + dur + 0.03);
+            }
+
+            function kick(t) {
+                const o = ac.createOscillator();
+                const g = ac.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(160, t);
+                o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+                g.gain.setValueAtTime(0.7, t);
+                g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+                o.connect(g);
+                g.connect(out);
+                o.start(t);
+                o.stop(t + 0.2);
+            }
+
+            function noiseHit(t, dur, vol, type, freq) {
+                const s = ac.createBufferSource();
+                s.buffer = noiseBuf;
+                const f = ac.createBiquadFilter();
+                f.type = type;
+                f.frequency.value = freq;
+                const g = ac.createGain();
+                g.gain.setValueAtTime(vol, t);
+                g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+                s.connect(f);
+                f.connect(g);
+                g.connect(out);
+                s.start(t);
+                s.stop(t + dur + 0.03);
+            }
+
+            function playStep(i, t) {
+                const bar = (i >> 4) % 8;
+                const s = i & 15;
+
+                // ドラム
+                if (s === 0 || s === 8 || s === 10) kick(t);
+                if (s === 4 || s === 12) {
+                    noiseHit(t, 0.14, 0.32, 'bandpass', 1800);
+                    voice('triangle', 190, t, 0.08, 0.18, 0, 0.3);
+                }
+                if (bar === 7 && (s === 14 || s === 15)) noiseHit(t, 0.08, 0.2, 'bandpass', 2200);
+                if (s % 2 === 0) noiseHit(t, 0.04, (s % 4 === 2) ? 0.10 : 0.05, 'highpass', 7000);
+
+                // ベース
+                if (s % 2 === 0) {
+                    const root = BASS_ROOTS[bar % 4] + (s === 14 ? 12 : 0);
+                    voice('sawtooth', mtof(root), t, STEP_SEC * 1.8, 0.16, 700, 0.6);
+                }
+
+                // アルペジオ
+                const chord = ARP_CHORDS[bar % 4];
+                voice('square', mtof(chord[ARP_PATTERN[s]]), t, STEP_SEC * 1.5, 0.03, 2500, 0.3);
+
+                // メロディ
+                const m = MELODY_MAP[i];
+                if (m) {
+                    const d = STEP_SEC * m[1] * 0.95;
+                    voice('square', mtof(m[0]), t, d, 0.07, 3200, 0.75);
+                    voice('square', mtof(m[0]), t, d, 0.035, 3200, 0.75, 8);
+                }
+            }
+
+            function schedule() {
+                while (nextTime < ac.currentTime + 0.25) {
+                    playStep(step, nextTime);
+                    nextTime += STEP_SEC;
+                    step = (step + 1) % LOOP_STEPS;
+                }
+            }
+
+            function start() {
+                if (!init()) return;
+                if (ac.state !== 'running') ac.resume();
+                if (playing) return;
+                playing = true;
+                out = ac.createGain();
+                out.gain.value = 0.55;
+                out.connect(comp);
+                step = 0;
+                nextTime = ac.currentTime + 0.08;
+                schedule();
+                timer = setInterval(schedule, 50);
+            }
+
+            function stop() {
+                if (!playing) return;
+                playing = false;
+                clearInterval(timer);
+                const o = out;
+                o.gain.cancelScheduledValues(ac.currentTime);
+                o.gain.setTargetAtTime(0, ac.currentTime, 0.12);
+                setTimeout(() => { try { o.disconnect(); } catch (e) {} }, 800);
+            }
+
+            // スマホ等で最初のタップ後に音が止まっている場合の復帰用
+            function unlock() {
+                if (ac && playing && !document.hidden && ac.state !== 'running') ac.resume();
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                if (!ac) return;
+                if (document.hidden) {
+                    ac.suspend();
+                } else if (playing) {
+                    ac.resume();
+                }
+            });
+
+            return { start, stop, unlock };
+        })();
+
+        ['touchend', 'mousedown', 'click', 'keydown'].forEach((ev) => {
+            window.addEventListener(ev, () => Music.unlock(), { passive: true });
+        });
+
+        /* ===== 描画 ===== */
+        function drawPlayer(alpha) {
+            const y = player.prevY + (player.y - player.prevY) * alpha;
             ctx.fillStyle = '#f2b179';
             ctx.beginPath();
-            ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+            ctx.arc(player.x, y, player.size, 0, Math.PI * 2);
             ctx.fill();
             ctx.strokeStyle = '#f9f6f2';
             ctx.lineWidth = 2;
             ctx.stroke();
         }
 
-        function drawPipes() {
+        function drawPipes(alpha) {
             ctx.fillStyle = '#eee4da';
             pipes.forEach(pipe => {
-                ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
-                ctx.fillRect(pipe.x, canvas.height - pipe.bottom, pipe.width, pipe.bottom);
+                const px = pipe.prevX + (pipe.x - pipe.prevX) * alpha;
+                const x0 = snapX(px);
+                const x1 = snapX(px + pipe.width);
+                ctx.fillRect(x0, 0, x1 - x0, snapY(pipe.top));
+                const by = snapY(H - pipe.bottom);
+                ctx.fillRect(x0, by, x1 - x0, H - by);
             });
         }
 
+        function draw(alpha) {
+            ctx.setTransform(sx, 0, 0, sy, 0, 0);
+            ctx.clearRect(0, 0, W, H);
+
+            if (!isStarted) {
+                drawPlayer(1);
+                ctx.fillStyle = '#f9f6f2';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('タップまたはスペースでスタート', W / 2, H / 2);
+                return;
+            }
+
+            drawPipes(alpha);
+            drawPlayer(alpha);
+
+            if (isGameOver) drawResult();
+        }
+
+        function txt(str, x, y, size, col, stroke) {
+            ctx.font = 'bold ' + size + 'px -apple-system, "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            if (stroke) {
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = stroke;
+                ctx.strokeText(str, x, y);
+            }
+            ctx.fillStyle = col;
+            ctx.fillText(str, x, y);
+        }
+
+        // 結果画面（スコア＋ランク）
+        function drawResult() {
+            ctx.fillStyle = 'rgba(119, 110, 101, 0.75)';
+            ctx.fillRect(0, 0, W, H);
+
+            const x0 = snapX(40), x1 = snapX(280), y0 = snapY(70), y1 = snapY(335);
+            ctx.fillStyle = '#faf8ef';
+            ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+            ctx.strokeStyle = '#bbada0';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+
+            const rank = rankOf(score);
+            const newRecord = score > 0 && score > roundStartBest;
+
+            txt('GAME OVER', W / 2, 108, 22, '#776e65');
+            txt('RANK', W / 2, 138, 12, '#8f7a66');
+            txt(rank, W / 2, 205, 66, RANK_COL[rank], '#ffffff');
+            txt('SCORE ' + score, W / 2, 240, 20, '#4a4238');
+            txt('BEST ' + best, W / 2, 264, 14, '#8f7a66');
+            if (newRecord) txt('NEW BEST!', W / 2, 288, 16, '#f65e3b');
+            const nx = TH.find(t => t[0] > score);
+            txt(nx ? 'あと' + (nx[0] - score) + '本で' + nx[1] + 'ランクアップ！' : '最高ランク達成！', W / 2, 315, 13, '#776e65');
+        }
+
+        /* ===== ロジック（60Hz固定ステップ） ===== */
         function updatePipes() {
             if (frameCount % 90 === 0) {
                 let gap = 110;
                 let minHeight = 40;
-                let maxHeight = canvas.height - gap - minHeight;
+                let maxHeight = H - gap - minHeight;
                 let topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
-                let bottomHeight = canvas.height - topHeight - gap;
+                let bottomHeight = H - topHeight - gap;
 
                 pipes.push({
-                    x: canvas.width,
+                    x: W,
+                    prevX: W,
                     width: 35,
                     top: topHeight,
                     bottom: bottomHeight,
@@ -616,6 +966,7 @@
             }
 
             pipes.forEach(pipe => {
+                pipe.prevX = pipe.x;
                 pipe.x -= 2;
 
                 if (!pipe.passed && pipe.x + pipe.width < player.x) {
@@ -636,13 +987,13 @@
         }
 
         function checkCollision() {
-            if (player.y + player.size >= canvas.height || player.y - player.size <= 0) {
+            if (player.y + player.size >= H || player.y - player.size <= 0) {
                 return true;
             }
 
             for (let pipe of pipes) {
                 if (player.x + player.size > pipe.x && player.x - player.size < pipe.x + pipe.width) {
-                    if (player.y - player.size < pipe.top || player.y + player.size > canvas.height - pipe.bottom) {
+                    if (player.y - player.size < pipe.top || player.y + player.size > H - pipe.bottom) {
                         return true;
                     }
                 }
@@ -650,34 +1001,8 @@
             return false;
         }
 
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (!isStarted) {
-                drawPlayer();
-                ctx.fillStyle = '#f9f6f2';
-                ctx.font = '16px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('タップまたはスペースでスタート', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-
-            if (isGameOver) {
-                drawPipes();
-                drawPlayer();
-                ctx.fillStyle = 'rgba(119, 110, 101, 0.75)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = '#f9f6f2';
-                ctx.font = 'bold 24px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
-
-                ctx.font = '14px sans-serif';
-                ctx.fillText('タップで再挑戦', canvas.width / 2, canvas.height / 2 + 25);
-                return;
-            }
-
+        function update() {
+            player.prevY = player.y;
             player.velocity += player.gravity;
             player.y += player.velocity;
 
@@ -686,13 +1011,44 @@
 
             if (checkCollision()) {
                 isGameOver = true;
+                Music.stop();
                 handleGameOver();
             }
+        }
 
-            drawPipes();
-            drawPlayer();
+        function gameLoop(ts) {
+            rafId = null;
 
-            requestAnimationFrame(gameLoop);
+            if (!isStarted) {
+                draw(1);
+                return;
+            }
+
+            if (isGameOver) {
+                draw(1);
+                return;
+            }
+
+            if (!lastTime) lastTime = ts;
+            let dt = ts - lastTime;
+            lastTime = ts;
+            if (dt > 100) dt = 100; // タブ復帰時などの一気進み防止
+            acc += dt;
+
+            while (acc >= STEP_MS && !isGameOver) {
+                update();
+                acc -= STEP_MS;
+            }
+
+            draw(isGameOver ? 1 : acc / STEP_MS);
+            rafId = requestAnimationFrame(gameLoop);
+        }
+
+        function startLoop() {
+            if (rafId) cancelAnimationFrame(rafId); // ループの二重起動を防ぐ
+            lastTime = 0;
+            acc = 0;
+            rafId = requestAnimationFrame(gameLoop);
         }
 
         function doJump() {
@@ -700,22 +1056,22 @@
 
             if (!isStarted) {
                 isStarted = true;
-                gameLoop();
+                roundStartBest = Number(best) || 0;
+                Music.start();
+                startLoop();
                 return;
             }
 
-            if (isGameOver) {
-                resetGame();
-                return;
-            }
+            if (isGameOver) return; // 結果画面を見せるため、モーダル表示までは入力を受け付けない
 
             player.velocity = player.jump;
         }
 
         function handleGameOver() {
-            setTimeout(() => {
+            clearTimeout(gameOverTimer);
+            gameOverTimer = setTimeout(() => {
                 adModal.style.display = 'flex';
-            }, 1000);
+            }, 1000); // 結果画面を約1秒見せてから「もう一度プレイ」画面へ
         }
 
         function closeAdModal() {
@@ -725,7 +1081,10 @@
 
         function resetGame() {
             if (adModal.style.display === 'flex') return;
+            clearTimeout(gameOverTimer);
+            roundStartBest = Number(best) || 0;
             player.y = 200;
+            player.prevY = 200;
             player.velocity = 0;
             pipes = [];
             frameCount = 0;
@@ -733,7 +1092,8 @@
             scoreDisplay.textContent = 0;
             isGameOver = false;
             isStarted = true;
-            gameLoop();
+            Music.start();
+            startLoop();
         }
 
         window.addEventListener('keydown', (e) => {
@@ -755,7 +1115,13 @@
             doJump();
         });
 
-        gameLoop();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if (!rafId) draw(1); // ループ停止中のみ即時再描画（動作中は次フレームで描画される）
+        });
+
+        resizeCanvas();
+        draw(1);
     </script>
 </body>
 </html>
